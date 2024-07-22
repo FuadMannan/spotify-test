@@ -19,14 +19,14 @@ function accessTokenQuery(clientId, code) {
   return query;
 }
 
-async function fetchTokens(clientId, code) {
+async function fetchInitialTokens(clientId, code) {
   const query = accessTokenQuery(clientId, code);
 
   const result = await fetch('https://accounts.spotify.com/api/token', query);
 
-  const { access_token: accessToken, refresh_token: refreshToken } =
-    await result.json();
-  return { accessToken, refreshToken };
+  const { access_token, refresh_token, expires_in } = await result.json();
+  const expires_at = Date.now() + expires_in * 1000;
+  return { access_token, refresh_token, expires_at };
 }
 
 function profileQuery(token) {
@@ -50,22 +50,22 @@ export function Profile() {
     useContext(AuthContext);
 
   useEffect(() => {
-    const getTokens = async () => {
+    const initTokens = async () => {
       if (!tokens) {
-        const result = await fetchTokens(clientId, code);
+        const result = await fetchInitialTokens(clientId, code);
         if (!Object.values(result).includes(undefined)) {
           setTokens(result);
           sessionStorage.setItem('spotifyTokens', JSON.stringify(result));
         }
       }
     };
-    getTokens();
+    initTokens();
   }, []);
 
   useEffect(() => {
     const getProfile = async () => {
       if (tokens && profile.id === '') {
-        const result = await fetchProfile(tokens.accessToken);
+        const result = await fetchProfile(tokens.access_token);
         if (result.images) result.images.sort((a, b) => b.height - a.height);
         if (profile.id === '' && !Object.keys(result).includes('error')) {
           setProfile(result);
