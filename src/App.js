@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { useState, createContext, useEffect } from 'react';
 import './App.css';
 import { Landing } from './components/auth';
 
@@ -8,6 +8,30 @@ function getSession(key) {
   if (Object.keys(sessionStorage).includes(key))
     return JSON.parse(sessionStorage.getItem(key));
   return false;
+}
+
+async function refreshTokens(clientId) {
+  const { refresh_token: current_refresh_token } = JSON.parse(
+    sessionStorage.spotifyTokens
+  );
+  const url = 'https://accounts.spotify.com/api/token';
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: current_refresh_token,
+      client_id: clientId,
+    }),
+  };
+  const body = await fetch(url, payload);
+  const { access_token, refresh_token, expires_in } = await body.json();
+  const expires_at = Date.now() + expires_in * 1000;
+  const tokens = { access_token, refresh_token, expires_at };
+  sessionStorage.setItem('spotifyTokens', JSON.stringify(tokens));
+  return tokens;
 }
 
 function App() {
@@ -28,6 +52,16 @@ function App() {
   const [tokens, setTokens] = useState(
     sessionStorage.spotifyTokens ? sessionStorage.spotifyTokens : null
   );
+
+  useEffect(() => {
+    if (tokens) {
+      const time = tokens.expires_at - Date.now() - 5000;
+      setTimeout(() => {
+        refreshTokens(clientId).then((result) => setTokens(result));
+      }, time);
+    }
+  }, [tokens]);
+
   const context = {
     clientId,
     code,
