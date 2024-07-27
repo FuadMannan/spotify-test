@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useContext } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
+import { Navbar } from './navbar';
 
 function accessTokenQuery(clientId, code) {
   const verifier = sessionStorage.getItem('verifier');
@@ -97,6 +98,7 @@ export function Profile() {
         </Fragment>
       ) : (
         <div>
+          <Navbar />
           <h1>Profile Data</h1>
           <section
             id="profile"

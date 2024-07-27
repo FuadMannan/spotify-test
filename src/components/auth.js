@@ -2,6 +2,8 @@ import { Fragment, useContext } from 'react';
 import { Profile } from './profile';
 import { Button, Card } from 'react-bootstrap';
 import { AuthContext } from '../App';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Library } from './library';
 
 async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);
@@ -65,7 +67,12 @@ export function Landing() {
           </Card.Body>
         </Card>
       ) : (
-        <Profile profile={profile} />
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Profile profile={profile} />} />
+            <Route path='/library' element={<Library />} />
+          </Routes>
+        </BrowserRouter>
       )}
     </Fragment>
   );
