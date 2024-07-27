@@ -2,6 +2,7 @@ import { Fragment, useEffect, useContext } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { Navbar } from './navbar';
+import { libraryGenerator } from '../util/queries';
 
 function accessTokenQuery(clientId, code) {
   const verifier = sessionStorage.getItem('verifier');
@@ -54,6 +55,8 @@ export function Profile() {
     setProfile,
     tokens,
     setTokens,
+    setLibrary,
+    librarySongGenerator,
   } = useContext(AuthContext);
 
   useEffect(() => {
@@ -78,6 +81,11 @@ export function Profile() {
         if (profile.id === '' && !Object.keys(result).includes('error')) {
           setProfile(result);
           sessionStorage.setItem('spotifyProfile', JSON.stringify(result));
+          librarySongGenerator.current = libraryGenerator(
+            tokens.access_token,
+            result.country
+          );
+          setLibrary([]);
         }
       }
     };

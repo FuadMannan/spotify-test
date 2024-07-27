@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from 'react';
+import { useState, createContext, useEffect, useRef } from 'react';
 import './App.css';
 import { Landing } from './components/auth';
 
@@ -52,6 +52,9 @@ function App() {
   const [tokens, setTokens] = useState(
     sessionStorage.spotifyTokens ? sessionStorage.spotifyTokens : null
   );
+  const [library, setLibrary] = useState(null);
+  const librarySongGenerator = useRef(null);
+  const libraryTotal = useRef(0);
 
   useEffect(() => {
     if (tokens) {
@@ -62,6 +65,29 @@ function App() {
     }
   }, [tokens]);
 
+  useEffect(() => {
+    const getSongsBatch = async () => {
+      if (librarySongGenerator.current && library) {
+        try {
+          const songsBatch = await librarySongGenerator.current.next();
+          if (library.length === 0) {
+            libraryTotal.current = songsBatch.value[1];
+            songsBatch.value = songsBatch.value[0];
+          }
+          if (!songsBatch.done && songsBatch.value) {
+            setLibrary(current => [...current, ...songsBatch.value]);
+          } else if (!songsBatch.done && !songsBatch.value) {
+            throw new Error('Something went wrong');
+          }
+        } catch (error) {
+          console.log('Caught error:', error);
+          setLibrary(current => [...current]);
+        }
+      }
+    }
+    getSongsBatch();
+  }, [library]);
+
   const context = {
     clientId,
     code,
@@ -70,6 +96,10 @@ function App() {
     tokens,
     setTokens,
     permissionGranted,
+    library,
+    setLibrary,
+    librarySongGenerator,
+    libraryTotal,
   };
   return (
     <div className="App">
