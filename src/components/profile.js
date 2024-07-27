@@ -46,8 +46,14 @@ async function fetchProfile(token) {
 }
 
 export function Profile() {
-  const { clientId, code, profile, setProfile, tokens, setTokens } =
-    useContext(AuthContext);
+  const {
+    clientId,
+    code,
+    profile,
+    setProfile,
+    tokens,
+    setTokens,
+  } = useContext(AuthContext);
 
   useEffect(() => {
     const initTokens = async () => {
@@ -56,6 +62,7 @@ export function Profile() {
         if (!Object.values(result).includes(undefined)) {
           setTokens(result);
           sessionStorage.setItem('spotifyTokens', JSON.stringify(result));
+          window.history.replaceState(null, '', '/');
         }
       }
     };
@@ -90,10 +97,13 @@ export function Profile() {
         </Fragment>
       ) : (
         <div>
-          <h1>Display your Spotify profile data</h1>
-          <section id="profile" className='position-absolute top-50 start-50 translate-middle'>
+          <h1>Profile Data</h1>
+          <section
+            id="profile"
+            className="position-absolute top-50 start-50 translate-middle"
+          >
             <h2>
-              Logged in as{' '}
+              Logged in as
               <span id="displayName">
                 {profile && profile.display_name ? profile.display_name : ''}
               </span>
@@ -107,14 +117,15 @@ export function Profile() {
               />
             </span>
             <div>
-            <ul style={{textAlign: 'initial'}}>
-              <li>
-                User ID: <span id="id">{profile.id ? profile.id : ''}</span>
-              </li>
-              <li>
-                Profile Image: <span id="imgUrl">{profile.images[0].url}</span>
-              </li>
-            </ul>
+              <ul style={{ textAlign: 'initial' }}>
+                <li>
+                  User ID: <span id="id">{profile.id ? profile.id : ''}</span>
+                </li>
+                <li>
+                  Profile Image:
+                  <span id="imgUrl">{profile.images[0].url}</span>
+                </li>
+              </ul>
             </div>
           </section>
         </div>
