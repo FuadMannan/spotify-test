@@ -49,19 +49,58 @@ export function Library() {
     setTotalPaginationItems(num);
   }, [totalPages]);
 
+  const ellipsisClick = (direction) => {
+    let newRange;
+    let availablePagination = totalPaginationItems - 6;
+    switch (direction) {
+      case 'prev':
+        if (pageRange[0] - availablePagination <= 1) {
+          newRange = [2, availablePagination]
+        } else {
+          availablePagination = totalPaginationItems - 5;
+          newRange = [pageRange[0] - availablePagination, pageRange[0] - 1]
+        }
+        setPage(x => newRange[1]);
+        setPageRange(newRange);
+        break;
+      case 'next':
+        if (pageRange[1] + availablePagination >= totalPages) {
+          newRange = [pageRange[1]+ 1, totalPages - 1];
+        } else {
+          availablePagination = totalPaginationItems - 5;
+          newRange = [pageRange[1] + 1, pageRange[1] + availablePagination];
+        }
+        setPage(x => newRange[0]);
+        setPageRange(newRange);
+        break;
+      default:
+        break;
+    }
+  }
+
   useEffect(() => {
     const tempIndices = [];
     tempIndices.push(
       <Pagination.Prev
         disabled={page === 1 ? true : false}
-        onClick={() => setPage((x) => x - 1)}
+        onClick={() => {
+          setPage((x) => x - 1);
+          setPageRange([pageRange[0] - 1, pageRange[1] - 1]);
+        }}
       />,
-      <Pagination.Item key={1} active={page === 1} onClick={() => setPage(1)}>
+      <Pagination.Item
+        key={1}
+        active={page === 1}
+        onClick={() => {
+          setPage(1);
+          setPageRange([2, totalPaginationItems - 6]);
+        }}
+      >
         1
       </Pagination.Item>
     );
     if (pageRange[0] > 2) {
-      tempIndices.push(<Pagination.Ellipsis />);
+      tempIndices.push(<Pagination.Ellipsis onClick={() => ellipsisClick('prev')} />);
     }
     for (let index = pageRange[0]; index <= pageRange[1]; index++) {
       tempIndices.push(
@@ -75,14 +114,17 @@ export function Library() {
       );
     }
     if (pageRange[1] < totalPages - 1) {
-      tempIndices.push(<Pagination.Ellipsis />);
+      tempIndices.push(<Pagination.Ellipsis onClick={() => ellipsisClick('next')} />);
     }
     if (totalPages > 1) {
       tempIndices.push(
         <Pagination.Item
           key={totalPages}
           active={page === totalPages}
-          onClick={() => setPage(totalPages)}
+          onClick={() => {
+            setPage(totalPages);
+            setPageRange([totalPages - totalPaginationItems + 4, totalPages - 1])
+          }}
         >
           {totalPages}
         </Pagination.Item>
@@ -91,7 +133,10 @@ export function Library() {
     tempIndices.push(
       <Pagination.Next
         disabled={page === totalPages}
-        onClick={() => setPage((x) => x + 1)}
+        onClick={() => {
+          setPage((x) => x + 1);
+          setPageRange([pageRange[0] + 1, pageRange[1] + 1])
+        }}
       />
     );
     setPaginationItems(tempIndices);
