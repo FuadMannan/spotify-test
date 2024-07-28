@@ -169,14 +169,29 @@ export function Library() {
                 songsOnPage.map((song, i) => (
                   <tr>
                     <td>{(page - 1) * BATCH_SIZE + i + 1}</td>
-                    <td>{song.track.name}</td>
                     <td>
-                      {song.track.artists
-                        .map((artist) => artist.name)
-                        .toString()
-                        .replaceAll(',', ', ')}
+                      <a href={song.track.external_urls.spotify}>
+                        {song.track.name}
+                      </a>
                     </td>
-                    <td>{song.track.album.name}</td>
+                    <td>
+                      {song.track.artists.map((artist, i) => (
+                        <>
+                          <a href={artist.external_urls.spotify}>
+                            {artist.name}
+                          </a>
+                          {song.track.artists.length > 1 &&
+                          i < song.track.artists.length - 1
+                            ? ', '
+                            : ''}
+                        </>
+                      ))}
+                    </td>
+                    <td>
+                      <a href={song.track.album.external_urls.spotify}>
+                        {song.track.album.name}
+                      </a>
+                    </td>
                     <td>{song.added_at}</td>
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
                   </tr>
