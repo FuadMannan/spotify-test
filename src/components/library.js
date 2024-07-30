@@ -1,5 +1,5 @@
 import { Navbar } from './navbar';
-import { Table, Pagination } from 'react-bootstrap';
+import { Table, Pagination, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 
@@ -194,7 +194,9 @@ export function Library() {
               </tr>
             </thead>
             <tbody>
-              {songsOnPage ? (
+              {songsOnPage &&
+              Array.isArray(songsOnPage) &&
+              songsOnPage.length === 0 ? (
                 songsOnPage.map((song, i) => (
                   <tr>
                     <td>{(page - 1) * BATCH_SIZE + i + 1}</td>
@@ -227,12 +229,24 @@ export function Library() {
                 ))
               ) : (
                 <tr>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
+                  <td>
+                    <Spinner animation="border" />
+                  </td>
                 </tr>
               )}
             </tbody>
