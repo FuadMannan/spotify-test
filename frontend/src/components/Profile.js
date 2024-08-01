@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useContext } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import { Navbar } from './navbar';
+import { Navbar } from './Navbar';
 import { libraryGenerator } from '../util/queries';
 
 function accessTokenQuery(clientId, code) {
