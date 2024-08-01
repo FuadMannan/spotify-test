@@ -2,6 +2,7 @@ import { Navbar } from './navbar';
 import { Table, Pagination, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { DownloadButton } from './DownloadButton';
 
 function convertMilliseconds(ms) {
   const minutes = Math.floor(ms / 60000);
@@ -173,10 +174,22 @@ export function Library() {
 
   useEffect(getSongSelection, [page, library]);
 
+  const extractLibrary = (item) => {
+    const { added_at } = item;
+    const { id, name: track } = item.track;
+    const artists = item.track.artists.map((artist) => artist.name);
+    const { name: album } = item.track.album;
+    return { id, track, artists, album, added_at };
+  };
+
   return (
     <>
       <Navbar />
       <h1>Library</h1>
+      <DownloadButton
+        data={library.map(extractLibrary)}
+        endpoint="http://localhost:8000/download-library"
+      />
       <div
         className="d-flex flex-column align-items-center justify-content-center p-5"
         style={{ height: '90vh' }}
