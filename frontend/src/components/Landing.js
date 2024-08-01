@@ -1,9 +1,9 @@
 import { Fragment, useContext } from 'react';
-import { Profile } from './profile';
+import { Profile } from './Profile';
 import { Button, Card } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Library } from './library';
+import { Library } from './Library';
 
 async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);

@@ -1,4 +1,4 @@
-import { Navbar } from './navbar';
+import { Navbar } from './Navbar';
 import { Table, Pagination, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
