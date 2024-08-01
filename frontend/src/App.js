@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect, useRef } from 'react';
 import './App.css';
-import { Landing } from './components/auth';
+import { Landing } from './components/Landing';
 
 export const AuthContext = createContext();
 
