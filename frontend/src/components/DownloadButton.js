@@ -32,7 +32,7 @@ export function DownloadButton(props) {
   };
 
   return (
-    <Button variant="success" onClick={handleDownload}>
+    <Button variant="success" onClick={handleDownload} disabled={props.disabled}>
       Download Library as JSON
     </Button>
   );

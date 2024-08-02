@@ -189,6 +189,7 @@ export function Library() {
       <DownloadButton
         data={library.map(extractLibrary)}
         endpoint="http://localhost:8000/download-library"
+        disabled={library.length !== libraryTotal.current}
       />
       <div
         className="d-flex flex-column align-items-center justify-content-center p-5"
