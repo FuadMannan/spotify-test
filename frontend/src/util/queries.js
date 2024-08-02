@@ -1,18 +1,20 @@
 const API = 'https://api.spotify.com/v1';
+const TRACKS = `${API}/tracks`;
 const SAVED_TRACKS = `${API}/me/tracks`;
 
-async function fetchSongsBatch(token, market, offset) {
+const header = (token) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
+
+async function rateCall(url, body) {
   let done = false;
   let response;
   while (!done) {
-    response = await fetch(
-      `${SAVED_TRACKS}?market=${market}&limit=50&offset=${offset}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    response = await fetch(url, body);
     if ([429, 500].includes(response.status)) {
       const retryAfter = response.headers.get('Retry-After');
       const retryAfterMs = (retryAfter ? parseInt(retryAfter) : 1) * 1000;
@@ -27,19 +29,29 @@ async function fetchSongsBatch(token, market, offset) {
   return data;
 }
 
+async function fetchSavedSongsBatch(token, market, offset) {
+  const URL = `${SAVED_TRACKS}?market=${market}&limit=50&offset=${offset}`;
+  return await rateCall(URL, header(token));
+}
+
 export async function* libraryGenerator(token, market) {
-  let { total, items: songBatch } = await fetchSongsBatch(token, market, 0);
+  let { total, items: songBatch } = await fetchSavedSongsBatch(
+    token,
+    market,
+    0
+  );
   let songs = [songBatch, total];
   yield songs;
+  let remaining = total - songBatch.length
   const miniBatches = Math.ceil(total / 1000);
   for (let i = 0; i < miniBatches; i++) {
-    const remaining = total - songs.length;
+    if (i > 0) remaining -= songs.length;
     const batch = remaining > 1000 ? 20 : Math.ceil(remaining / 50);
     const promises = [];
     for (let j = 0; j < batch; j++) {
       const offset = i * 1000 + j * 50;
       if (offset === 0) continue;
-      promises.push(fetchSongsBatch(token, market, offset));
+      promises.push(fetchSavedSongsBatch(token, market, offset));
     }
     try {
       const results = await Promise.all(promises);
