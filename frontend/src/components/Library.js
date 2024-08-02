@@ -209,7 +209,7 @@ export function Library() {
             <tbody>
               {songsOnPage &&
               Array.isArray(songsOnPage) &&
-              songsOnPage.length === 0 ? (
+              songsOnPage.length !== 0 ? (
                 songsOnPage.map((song, i) => (
                   <tr>
                     <td>{(page - 1) * BATCH_SIZE + i + 1}</td>
