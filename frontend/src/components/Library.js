@@ -1,8 +1,9 @@
 import { Navbar } from './Navbar';
-import { Table, Pagination, Spinner } from 'react-bootstrap';
+import { Table, Pagination, Spinner, Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
+import { findShadowEntries } from '../util/queries';
 
 function convertMilliseconds(ms) {
   const minutes = Math.floor(ms / 60000);
@@ -11,19 +12,35 @@ function convertMilliseconds(ms) {
 }
 
 export function Library() {
-  const { library, libraryTotal } = useContext(AuthContext);
+  const {
+    library,
+    libraryTotal,
+    tokens,
+    profile,
+    shadowEntries,
+    setShadowEntries,
+    shadowEntriesTotal,
+  } = useContext(AuthContext);
   const [page, setPage] = useState(1);
   const [pageRange, setPageRange] = useState([]);
   const [songsOnPage, setSongsOnPage] = useState(null);
   const [totalPaginationItems, setTotalPaginationItems] = useState(1);
   const [paginationItems, setPaginationItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState({
+    library: 1,
+    shadowEntries: 0,
+  });
+  const [mode, setMode] = useState('library');
 
+  // sets songs on page
   const getSongSelection = () => {
     if (library.length > 0) {
       const start = (page - 1) * BATCH_SIZE;
       const end = page * BATCH_SIZE;
-      const songs = library.slice(start, end);
+      const songs =
+        mode === 'library'
+          ? library.slice(start, end)
+          : shadowEntries.slice(start, end);
       setSongsOnPage(songs);
     }
   };
@@ -32,27 +49,32 @@ export function Library() {
   const PAGINATION_ITEM_WIDTH = 51;
 
   useEffect(() => {
-    const newTotal = Math.ceil(libraryTotal.current / BATCH_SIZE);
-    setTotalPages(newTotal);
-  }, [libraryTotal]);
+    const newLibraryTotal = Math.ceil(libraryTotal.current / BATCH_SIZE);
+    const newShadowTotal = Math.ceil(shadowEntriesTotal.current / BATCH_SIZE);
+    setTotalPages({ library: newLibraryTotal, shadowEntries: newShadowTotal });
+  }, [libraryTotal, shadowEntriesTotal.current]);
 
   useLayoutEffect(() => {
     const table = document.getElementsByTagName('table')[0];
     const tableWidth = table.offsetWidth;
     const num = Math.floor(tableWidth / PAGINATION_ITEM_WIDTH);
     let newRange;
-    if (totalPages + 2 <= num) {
-      newRange = [2, totalPages];
+    const context =
+      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
+    if (context + 2 <= num) {
+      newRange = [2, context];
     } else {
       newRange = [2, num - 4];
     }
     setPageRange(newRange);
     setTotalPaginationItems(num);
-  }, [totalPages]);
+  }, [totalPages, mode]);
 
   const ellipsisClick = (direction) => {
     let newRange;
     let availablePagination = totalPaginationItems - 6;
+    const context =
+      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
     switch (direction) {
       case 'prev':
         if (pageRange[0] - availablePagination <= 1) {
@@ -63,8 +85,8 @@ export function Library() {
         setPage((x) => newRange[1]);
         break;
       case 'next':
-        if (pageRange[1] + availablePagination >= totalPages) {
-          newRange = [pageRange[1] + 1, totalPages - 1];
+        if (pageRange[1] + availablePagination >= context) {
+          newRange = [pageRange[1] + 1, context - 1];
         } else {
           newRange = [pageRange[1] + 1, pageRange[1] + availablePagination];
         }
@@ -78,6 +100,8 @@ export function Library() {
 
   useEffect(() => {
     const tempIndices = [];
+    const context =
+      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
     tempIndices.push(
       <Pagination.Prev
         disabled={page === 1}
@@ -85,9 +109,7 @@ export function Library() {
           if (page - 1 < pageRange[0] && page !== 2)
             setPageRange([
               pageRange[0] - 1,
-              pageRange[1] === totalPages - 1
-                ? totalPages - 3
-                : pageRange[1] - 1,
+              pageRange[1] === context - 1 ? context - 3 : pageRange[1] - 1,
             ]);
           setPage((x) => x - 1);
         }}
@@ -134,33 +156,30 @@ export function Library() {
         </Pagination.Item>
       );
     }
-    if (pageRange[1] < totalPages - 1) {
+    if (pageRange[1] < context - 1) {
       tempIndices.push(
         <Pagination.Ellipsis onClick={() => ellipsisClick('next')} />
       );
     }
-    if (totalPages > 1) {
+    if (context > 1) {
       tempIndices.push(
         <Pagination.Item
-          key={totalPages}
-          active={page === totalPages}
+          key={context}
+          active={page === context}
           onClick={() => {
-            setPage(totalPages);
-            setPageRange([
-              totalPages - totalPaginationItems + 5,
-              totalPages - 1,
-            ]);
+            setPage(context);
+            setPageRange([context - totalPaginationItems + 5, context - 1]);
           }}
         >
-          {totalPages}
+          {context}
         </Pagination.Item>
       );
     }
     tempIndices.push(
       <Pagination.Next
-        disabled={page === totalPages}
+        disabled={page === context}
         onClick={() => {
-          if (page + 1 > pageRange[1] && page !== totalPages - 1)
+          if (page + 1 > pageRange[1] && page !== context - 1)
             setPageRange([
               pageRange[0] === 2 ? 4 : pageRange[0] + 1,
               pageRange[1] + 1,
@@ -170,9 +189,9 @@ export function Library() {
       />
     );
     setPaginationItems(tempIndices);
-  }, [totalPaginationItems, pageRange, page, totalPages]);
+  }, [totalPaginationItems, pageRange, page, totalPages, mode, shadowEntries]);
 
-  useEffect(getSongSelection, [page, library]);
+  useEffect(getSongSelection, [page, library, mode, shadowEntries]);
 
   const extractLibrary = (item) => {
     const { added_at } = item;
@@ -182,15 +201,49 @@ export function Library() {
     return { id, track, artists, album, added_at };
   };
 
+  useEffect(() => {
+    if (library && library.length === libraryTotal.current && !shadowEntries) {
+      findShadowEntries(tokens.access_token, profile.country, library).then(
+        (entries) => {
+          setShadowEntries(entries);
+          shadowEntriesTotal.current = entries.length;
+        }
+      );
+    }
+  }, [library]);
+
   return (
     <>
       <Navbar />
       <h1>Library</h1>
-      <DownloadButton
-        data={library.map(extractLibrary)}
-        endpoint="http://localhost:8000/download-library"
-        disabled={library.length !== libraryTotal.current}
-      />
+      <div>
+        <div className="d-inline p-2">
+          <DownloadButton
+            data={library.map(extractLibrary)}
+            endpoint="http://localhost:8000/download-library"
+            disabled={library.length !== libraryTotal.current}
+          />
+        </div>
+        <div className="d-inline p-2">
+          <Button
+            variant="success"
+            onClick={() => {
+              if (mode === 'library') {
+                setMode('shadow');
+              } else {
+                setMode('library');
+              }
+              setPage(1);
+            }}
+            disabled={
+              !shadowEntries ||
+              shadowEntries.length !== shadowEntriesTotal.current
+            }
+          >
+            {mode === 'library' ? 'View Shadow Entries' : 'View Library'}
+          </Button>
+        </div>
+      </div>
       <div
         className="d-flex flex-column align-items-center justify-content-center p-5"
         style={{ height: '90vh' }}

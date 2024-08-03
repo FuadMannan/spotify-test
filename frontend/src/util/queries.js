@@ -34,6 +34,11 @@ async function fetchSavedSongsBatch(token, market, offset) {
   return await rateCall(URL, header(token));
 }
 
+async function fetchSongsBatch(token, market, ids) {
+  const URL = `${TRACKS}?market=${market}&ids=${ids.join(',')}`;
+  return await rateCall(URL, header(token));
+}
+
 export async function* libraryGenerator(token, market) {
   let { total, items: songBatch } = await fetchSavedSongsBatch(
     token,
@@ -42,7 +47,7 @@ export async function* libraryGenerator(token, market) {
   );
   let songs = [songBatch, total];
   yield songs;
-  let remaining = total - songBatch.length
+  let remaining = total - songBatch.length;
   const miniBatches = Math.ceil(total / 1000);
   for (let i = 0; i < miniBatches; i++) {
     if (i > 0) remaining -= songs.length;
@@ -63,4 +68,33 @@ export async function* libraryGenerator(token, market) {
       return [];
     }
   }
+}
+
+export async function findShadowEntries(token, market, library) {
+  const batches = Math.ceil(library.length / 1000);
+  let searchResults = [];
+  let remaining = library.length;
+  for (let i = 0; i < batches; i++) {
+    const batch = remaining > 1000 ? 20 : Math.ceil(remaining / 50);
+    const promises = [];
+    for (let j = 0; j < batch; j++) {
+      const start = i * 1000 + j * 50;
+      const end = start + 50;
+      const trackIDs = library.slice(start, end).map((item) => item.track.id);
+      promises.push(fetchSongsBatch(token, market, trackIDs));
+    }
+    try {
+      const results = await Promise.all(promises);
+      let tracks = results.map((x) => x.tracks).flat();
+      searchResults.push(...tracks);
+      remaining -= tracks.length;
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+      return [];
+    }
+  }
+  const shadowEntries = library.filter((item, i) => {
+    return item.track.album.id !== searchResults[i].album.id;
+  });
+  return shadowEntries;
 }

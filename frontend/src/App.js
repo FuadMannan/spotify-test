@@ -55,6 +55,8 @@ function App() {
   const [library, setLibrary] = useState(null);
   const librarySongGenerator = useRef(null);
   const libraryTotal = useRef(0);
+  const [shadowEntries, setShadowEntries] = useState(null);
+  const shadowEntriesTotal = useRef(0);
 
   useEffect(() => {
     if (tokens) {
@@ -75,16 +77,16 @@ function App() {
             songsBatch.value = songsBatch.value[0];
           }
           if (!songsBatch.done && songsBatch.value) {
-            setLibrary(current => [...current, ...songsBatch.value]);
+            setLibrary((current) => [...current, ...songsBatch.value]);
           } else if (!songsBatch.done && !songsBatch.value) {
             throw new Error('Something went wrong');
           }
         } catch (error) {
           console.log('Caught error:', error);
-          setLibrary(current => [...current]);
+          setLibrary((current) => [...current]);
         }
       }
-    }
+    };
     getSongsBatch();
   }, [library]);
 
@@ -100,6 +102,9 @@ function App() {
     setLibrary,
     librarySongGenerator,
     libraryTotal,
+    shadowEntries,
+    setShadowEntries,
+    shadowEntriesTotal,
   };
   return (
     <div className="App">
