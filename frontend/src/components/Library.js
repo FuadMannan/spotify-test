@@ -294,7 +294,7 @@ export function Library() {
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
                   </tr>
                 ))
-              ) : (
+              ) : library.length !== libraryTotal.current ? (
                 <tr>
                   <td>
                     <Spinner animation="border" />
@@ -314,6 +314,15 @@ export function Library() {
                   <td>
                     <Spinner animation="border" />
                   </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>N/A</td>
+                  <td>N/A</td>
                 </tr>
               )}
             </tbody>
