@@ -39,3 +39,24 @@
 .page-item {
   width: 50px;
 }
+
+span#avatar {
+  display: flex;
+  justify-content: center;
+}
+
+.blankProfileImage {
+  height: 128px;
+  width: 128px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  fill: #7f7f7f;
+  background-color: #282828;
+  border-radius: 50%;
+}
+
+.blankProfileImage svg {
+  height: 50%;
+  width: 50%;
+}
