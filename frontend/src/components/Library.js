@@ -217,16 +217,16 @@ export function Library() {
       <Navbar />
       <h1>Library</h1>
       <div>
-        <div className="d-inline p-2">
+        <div className='d-inline p-2'>
           <DownloadButton
             data={library.map(extractLibrary)}
-            endpoint="http://localhost:8000/download-library"
+            endpoint='http://localhost:8000/download-library'
             disabled={library.length !== libraryTotal.current}
           />
         </div>
-        <div className="d-inline p-2">
+        <div className='d-inline p-2'>
           <Button
-            variant="success"
+            variant='success'
             onClick={() => {
               if (mode === 'library') {
                 setMode('shadow');
@@ -245,10 +245,10 @@ export function Library() {
         </div>
       </div>
       <div
-        className="d-flex flex-column align-items-center justify-content-center p-5"
+        className='d-flex flex-column align-items-center justify-content-center p-5'
         style={{ height: '90vh' }}
       >
-        <div id="tableContainer" style={{ overflowY: 'auto', width: '100%' }}>
+        <div id='tableContainer' style={{ overflowY: 'auto', width: '100%' }}>
           <Table striped bordered hover style={{ marginBottom: '0px' }}>
             <thead>
               <tr>
@@ -297,22 +297,22 @@ export function Library() {
               ) : library.length !== libraryTotal.current ? (
                 <tr>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                   <td>
-                    <Spinner animation="border" />
+                    <Spinner animation='border' />
                   </td>
                 </tr>
               ) : (

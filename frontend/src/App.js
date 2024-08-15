@@ -107,8 +107,8 @@ function App() {
     shadowEntriesTotal,
   };
   return (
-    <div className="App">
-      <header className="App-header">
+    <div className='App'>
+      <header className='App-header'>
         <h1>Spotify Test</h1>
       </header>
       <AuthContext.Provider value={context}>
