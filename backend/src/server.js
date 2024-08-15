@@ -1,9 +1,11 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import cors from 'cors';
 
 const app = express();
 app.use(express.json({ limit: '200mb' }));
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.listen(8000, () => {
   console.log('Server is listening on port 8000');
