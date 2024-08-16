@@ -45,6 +45,11 @@ async function fetchSongsBatch(token, market, ids) {
   return await rateCall(URL, header(token));
 }
 
+async function saveSongsBatch(token, ids) {
+  const URL = `${SAVED_TRACKS}?ids=${ids.join(',')}`;
+  return await rateCall(URL, header(token, 'PUT'));
+}
+
 export async function* libraryGenerator(token, market) {
   let { total, items: songBatch } = await fetchSavedSongsBatch(
     token,
@@ -103,4 +108,18 @@ export async function findShadowEntries(token, market, library) {
     return item.track.album.id !== searchResults[i].album.id;
   });
   return shadowEntries;
+}
+
+export async function addSongs(token, trackIDs) {
+  const batches = Math.ceil(trackIDs.length / 50);
+  const promises = [];
+  for (let i = 0; i < batches; i++) {
+    const batchIDs = trackIDs.slice(
+      i * 50,
+      Math.min((i + 1) * 50, trackIDs.length)
+    );
+    promises.push(saveSongsBatch(token, batchIDs));
+  }
+  const results = await Promise.all(promises);
+  return results;
 }
