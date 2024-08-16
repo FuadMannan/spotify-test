@@ -3,6 +3,7 @@ import { Table, Pagination, Spinner, Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
+import { AddSongsButton } from './AddSongsButton';
 import { findShadowEntries } from '../util/queries';
 
 function convertMilliseconds(ms) {
@@ -223,6 +224,9 @@ export function Library() {
             endpoint='http://localhost:8000/download-library'
             disabled={library.length !== libraryTotal.current}
           />
+        </div>
+        <div className='d-inline p-2'>
+          <AddSongsButton />
         </div>
         <div className='d-inline p-2'>
           <Button
