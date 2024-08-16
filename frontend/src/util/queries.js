@@ -2,8 +2,9 @@ const API = 'https://api.spotify.com/v1';
 const TRACKS = `${API}/tracks`;
 const SAVED_TRACKS = `${API}/me/tracks`;
 
-const header = (token) => {
+const header = (token, requestMethod = 'GET') => {
   return {
+    method: requestMethod,
     headers: {
       Authorization: `Bearer ${token}`,
     },
