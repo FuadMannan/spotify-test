@@ -26,8 +26,13 @@ async function rateCall(url, body) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
   }
-  const data = await response.json();
-  return data;
+  const contentLength = response.headers.get('Content-Length');
+  if (contentLength && parseInt(contentLength) > 0) {
+    const data = await response.json();
+    return data;
+  } else {
+    return {};
+  }
 }
 
 async function fetchSavedSongsBatch(token, market, offset) {
