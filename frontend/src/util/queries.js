@@ -51,29 +51,23 @@ async function saveSongsBatch(token, ids) {
 }
 
 export async function* libraryGenerator(token, market) {
-  let { total, items: songBatch } = await fetchSavedSongsBatch(
-    token,
-    market,
-    0
-  );
-  let songs = [songBatch, total];
-  yield songs;
-  let remaining = total - songBatch.length;
-  const miniBatches = Math.ceil(total / 1000);
-  for (let i = 0; i < miniBatches; i++) {
-    if (i > 0) remaining -= songs.length;
-    const batch = remaining > 1000 ? 20 : Math.ceil(remaining / 50);
+  let { total, items } = await fetchSavedSongsBatch(token, market, 0);
+  yield { songs: items, total };
+  let remaining = total - items.length;
+  const batches = Math.ceil(total / 1000);
+  for (let i = 0; i < batches; i++) {
+    if (i > 0) remaining -= items.length;
+    const miniBatch = remaining > 1000 ? 20 : Math.ceil(remaining / 50);
     const promises = [];
-    for (let j = 0; j < batch; j++) {
+    for (let j = 0; j < miniBatch; j++) {
       const offset = i * 1000 + j * 50;
       if (offset === 0) continue;
       promises.push(fetchSavedSongsBatch(token, market, offset));
     }
     try {
       const results = await Promise.all(promises);
-      songBatch = results.map((x) => x.items).flat();
-      songs = [...songBatch];
-      yield songs;
+      items = results.map((x) => x.items).flat();
+      yield [...items];
     } catch (error) {
       console.error('Error fetching songs:', error);
       return [];
