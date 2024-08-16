@@ -2,9 +2,11 @@ import { Button } from 'react-bootstrap';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { addSongs } from '../util/queries';
 import { AuthContext } from '../App';
+import { libraryGenerator } from '../util/queries';
 
 export function AddSongsButton() {
-  const { tokens } = useContext(AuthContext);
+  const { profile, tokens, library, setLibrary, librarySongGenerator } =
+    useContext(AuthContext);
   const [jsonData, setJsonData] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -14,10 +16,16 @@ export function AddSongsButton() {
       addSongs(tokens.access_token, IDs)
         .then(() => {
           setJsonData(null);
+          librarySongGenerator.current = libraryGenerator(
+            tokens.access_token,
+            profile.country,
+            library.length
+          );
+          setLibrary([...library]);
         })
         .catch((error) => console.log(error));
     }
-  }, [jsonData, tokens]);
+  }, [jsonData, tokens, library, setLibrary, librarySongGenerator, profile]);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];

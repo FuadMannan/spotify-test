@@ -50,19 +50,24 @@ async function saveSongsBatch(token, ids) {
   return await rateCall(URL, header(token, 'PUT'));
 }
 
-export async function* libraryGenerator(token, market) {
-  let { total, items } = await fetchSavedSongsBatch(token, market, 0);
+export async function* libraryGenerator(token, market, initialOffset = 0) {
+  let { total, items } = await fetchSavedSongsBatch(
+    token,
+    market,
+    initialOffset
+  );
   yield { songs: items, total };
-  let remaining = total - items.length;
-  const batches = Math.ceil(total / 1000);
+  let remaining = total - items.length - initialOffset;
+  const batches = Math.ceil(remaining / 1000);
   for (let i = 0; i < batches; i++) {
-    if (i > 0) remaining -= items.length;
     const miniBatch = remaining > 1000 ? 20 : Math.ceil(remaining / 50);
     const promises = [];
-    for (let j = 0; j < miniBatch; j++) {
-      const offset = i * 1000 + j * 50;
-      if (offset === 0) continue;
-      promises.push(fetchSavedSongsBatch(token, market, offset));
+    for (let j = 1; j <= miniBatch; j++) {
+      const batchOffset = i * 1000 + j * 50;
+      promises.push(
+        fetchSavedSongsBatch(token, market, initialOffset + batchOffset)
+      );
+      remaining - 50 < 0 ? (remaining = 0) : (remaining -= 50);
     }
     try {
       const results = await Promise.all(promises);
