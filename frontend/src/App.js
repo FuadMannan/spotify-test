@@ -72,9 +72,9 @@ function App() {
       if (librarySongGenerator.current && library) {
         try {
           const songsBatch = await librarySongGenerator.current.next();
-          if (libraryTotal.current === -1) {
-            libraryTotal.current = songsBatch.value[1];
-            songsBatch.value = songsBatch.value[0];
+          if (!songsBatch.done && !Array.isArray(songsBatch.value)) {
+            libraryTotal.current = songsBatch.value.total;
+            songsBatch.value = songsBatch.value.songs;
           }
           if (!songsBatch.done && songsBatch.value) {
             setLibrary((current) => [...current, ...songsBatch.value]);
@@ -83,7 +83,6 @@ function App() {
           }
         } catch (error) {
           console.log('Caught error:', error);
-          setLibrary((current) => [...current]);
         }
       }
     };
