@@ -22,8 +22,7 @@ export function Library() {
     setShadowEntries,
     shadowEntriesTotal,
   } = useContext(AuthContext);
-  const [page, setPage] = useState(1);
-  const [pageRange, setPageRange] = useState([]);
+  const [page, setPage] = useState({ current: 1, range: [] });
   const [songsOnPage, setSongsOnPage] = useState(null);
   const [totalPaginationItems, setTotalPaginationItems] = useState(1);
   const [paginationItems, setPaginationItems] = useState([]);
@@ -36,8 +35,8 @@ export function Library() {
   // sets songs on page
   const getSongSelection = () => {
     if (library.length > 0) {
-      const start = (page - 1) * BATCH_SIZE;
-      const end = page * BATCH_SIZE;
+      const start = (page.current - 1) * BATCH_SIZE;
+      const end = page.current * BATCH_SIZE;
       const songs =
         mode === 'library'
           ? library.slice(start, end)
@@ -49,148 +48,214 @@ export function Library() {
   const BATCH_SIZE = 50;
   const PAGINATION_ITEM_WIDTH = 51;
 
+  // sets total pages
   useEffect(() => {
     const newLibraryTotal = Math.ceil(libraryTotal.current / BATCH_SIZE);
     const newShadowTotal = Math.ceil(shadowEntriesTotal.current / BATCH_SIZE);
     setTotalPages({ library: newLibraryTotal, shadowEntries: newShadowTotal });
-  }, [libraryTotal, shadowEntriesTotal.current]);
+  }, [libraryTotal, shadowEntriesTotal]);
 
+  // sets initial page range, total pagination items
   useLayoutEffect(() => {
     const table = document.getElementsByTagName('table')[0];
     const tableWidth = table.offsetWidth;
-    const num = Math.floor(tableWidth / PAGINATION_ITEM_WIDTH);
+    const newTotalPaginationItems = Math.floor(
+      tableWidth / PAGINATION_ITEM_WIDTH
+    );
     let newRange;
-    const context =
-      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
-    if (context + 2 <= num) {
-      newRange = [2, context];
+    const totalContextPages = totalPages[mode];
+    // all pages fit, no need for ellipsis
+    if (totalContextPages + 2 <= newTotalPaginationItems) {
+      newRange = totalContextPages === 1 ? [] : [2, totalContextPages - 1];
     } else {
-      newRange = [2, num - 4];
+      newRange = [2, newTotalPaginationItems - 4];
     }
-    setPageRange(newRange);
-    setTotalPaginationItems(num);
+    setPage({ current: 1, range: newRange });
+    setTotalPaginationItems(newTotalPaginationItems);
   }, [totalPages, mode]);
 
-  const ellipsisClick = (direction) => {
-    let newRange;
-    let availablePagination = totalPaginationItems - 6;
-    const context =
-      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
-    switch (direction) {
-      case 'prev':
-        if (pageRange[0] - availablePagination <= 1) {
-          newRange = [2, availablePagination + 2];
-        } else {
-          newRange = [pageRange[0] - availablePagination, pageRange[0] - 1];
-        }
-        setPage((x) => newRange[1]);
-        break;
-      case 'next':
-        if (pageRange[1] + availablePagination >= context) {
-          newRange = [pageRange[1] + 1, context - 1];
-        } else {
-          newRange = [pageRange[1] + 1, pageRange[1] + availablePagination];
-        }
-        setPage((x) => newRange[0]);
-        break;
-      default:
-        break;
-    }
-    setPageRange(newRange);
-  };
-
+  // sets pagination items
   useEffect(() => {
+    const directionKeys = ['prev', 'next'];
+    const ellipsisClick = (direction) => {
+      let current = page.current;
+      let range;
+      let availablePagination = totalPaginationItems - 6;
+      const context = totalPages[mode];
+      let delta;
+      switch (direction) {
+        case directionKeys[0]:
+          delta = page.range[0] - availablePagination;
+          if (delta <= 1) {
+            range = [2, availablePagination + 2];
+          } else {
+            const start = delta === 3 ? delta - 1 : delta;
+            const end = delta === 2 ? page.range[0] : page.range[0] - 1;
+            range = [start, end];
+          }
+          break;
+        case directionKeys[1]:
+          delta = page.range[1] + availablePagination;
+          if (delta >= context) {
+            range = [context - availablePagination - 1, context - 1];
+          } else {
+            const start =
+              delta === context - 1 ? page.range[1] : page.range[1] + 1;
+            const end = delta === context - 2 ? delta + 1 : delta;
+            range = [start, end];
+          }
+          break;
+        default:
+          break;
+      }
+      current =
+        range[0] < current && current < range[1]
+          ? current
+          : direction === directionKeys[0]
+          ? range[1]
+          : range[0];
+      setPage({ current, range });
+    };
+
     const tempIndices = [];
-    const context =
-      mode === 'library' ? totalPages.library : totalPages.shadowEntries;
+    const totalContextPages = totalPages[mode];
+    const prev = page.current - 1;
+    const next = page.current + 1;
+    const hasEllipsis = totalContextPages + 2 > totalPaginationItems;
     tempIndices.push(
+      // PREVIOUS BUTTON
       <Pagination.Prev
-        disabled={page === 1}
+        disabled={page.current === 1}
+        key={directionKeys[0]}
         onClick={() => {
-          if (page - 1 < pageRange[0] && page !== 2)
-            setPageRange([
-              pageRange[0] - 1,
-              pageRange[1] === context - 1 ? context - 3 : pageRange[1] - 1,
-            ]);
-          setPage((x) => x - 1);
+          const current = page.current - 1;
+          const range = [];
+          // not all pages can be shown, use ellipsis
+          if (hasEllipsis && 2 <= prev && prev < page.range[0]) {
+            if (prev === 2) {
+              range.push(prev, page.range[1]);
+            } else if (
+              page.current === page.range[0] &&
+              page.range[1] === totalContextPages - 1
+            ) {
+              range.push(prev, page.range[1] - 2);
+            } else {
+              range.push(prev, page.range[1] - 1);
+            }
+          } else {
+            range.push(...page.range);
+          }
+          setPage({ current, range });
         }}
       />,
+
+      // FIRST PAGE
       <Pagination.Item
         key={1}
-        active={page === 1}
+        active={page.current === 1}
         onClick={() => {
-          setPage(1);
-          setPageRange([2, totalPaginationItems - 4]);
+          if (page.current !== 1) {
+            const range = [];
+            // not all pages can be shown
+            if (hasEllipsis) {
+              range.push(2, totalPaginationItems - 4);
+            } else if (totalContextPages > 1) {
+              range.push(2, totalContextPages - 1);
+            }
+            setPage({ current: 1, range });
+          }
         }}
       >
         1
       </Pagination.Item>
     );
-    if (pageRange[0] > 2) {
-      if (pageRange[0] === 3) {
-        tempIndices.push(
-          <Pagination.Item
-            key={2}
-            active={page === 2}
-            onClick={() => {
-              setPage(2);
-              setPageRange([3, totalPaginationItems - 4]);
-            }}
-          >
-            2
-          </Pagination.Item>
-        );
-      } else {
-        tempIndices.push(
-          <Pagination.Ellipsis onClick={() => ellipsisClick('prev')} />
-        );
-      }
+
+    // LEFT ELLIPSIS
+    if (hasEllipsis && page.range[0] !== 2) {
+      tempIndices.push(
+        <Pagination.Ellipsis
+          key={'lEllipsis'}
+          onClick={() => ellipsisClick(directionKeys[0])}
+        />
+      );
     }
-    for (let index = pageRange[0]; index <= pageRange[1]; index++) {
+
+    // PAGE RANGE (MIDDLE PAGES)
+    for (let index = page.range[0]; index <= page.range[1]; index++) {
       tempIndices.push(
         <Pagination.Item
           key={index}
-          active={index === page}
-          onClick={() => setPage(index)}
+          active={index === page.current}
+          onClick={() => setPage({ ...page, current: index })}
         >
           {index}
         </Pagination.Item>
       );
     }
-    if (pageRange[1] < context - 1) {
+
+    // RIGHT ELLIPSIS
+    if (hasEllipsis && page.range[1] < totalContextPages - 1) {
       tempIndices.push(
-        <Pagination.Ellipsis onClick={() => ellipsisClick('next')} />
+        <Pagination.Ellipsis
+          key={'rEllipsis'}
+          onClick={() => ellipsisClick(directionKeys[1])}
+        />
       );
     }
-    if (context > 1) {
+
+    // LAST PAGE
+    if (totalContextPages > 1) {
       tempIndices.push(
         <Pagination.Item
-          key={context}
-          active={page === context}
+          key={totalContextPages}
+          active={page.current === totalContextPages}
           onClick={() => {
-            setPage(context);
-            setPageRange([context - totalPaginationItems + 5, context - 1]);
+            const range = [];
+            if (hasEllipsis) {
+              range.push(
+                totalContextPages - totalPaginationItems + 5,
+                totalContextPages - 1
+              );
+            } else {
+              range.push(2, totalContextPages - 1);
+            }
+            setPage({ current: totalContextPages, range });
           }}
         >
-          {context}
+          {totalContextPages}
         </Pagination.Item>
       );
     }
+
+    // NEXT BUTTON
     tempIndices.push(
       <Pagination.Next
-        disabled={page === context}
+        disabled={page.current === totalContextPages}
+        key={directionKeys[1]}
         onClick={() => {
-          if (page + 1 > pageRange[1] && page !== context - 1)
-            setPageRange([
-              pageRange[0] === 2 ? 4 : pageRange[0] + 1,
-              pageRange[1] + 1,
-            ]);
-          setPage((x) => x + 1);
+          const current = page.current + 1;
+          const range = [];
+          if (
+            hasEllipsis &&
+            next <= totalContextPages - 1 &&
+            next > page.range[1]
+          ) {
+            if (page.range[0] === 2) {
+              range.push(page.range[0] + 2, next);
+            } else if (next === totalContextPages - 1) {
+              range.push(page.range[0], next);
+            } else {
+              range.push(page.range[0] + 1, next);
+            }
+          } else {
+            range.push(...page.range);
+          }
+          setPage({ current, range });
         }}
       />
     );
     setPaginationItems(tempIndices);
-  }, [totalPaginationItems, pageRange, page, totalPages, mode, shadowEntries]);
+  }, [totalPaginationItems, page, totalPages, mode]);
 
   useEffect(getSongSelection, [page, library, mode, shadowEntries]);
 
@@ -211,7 +276,15 @@ export function Library() {
         }
       );
     }
-  }, [library]);
+  }, [
+    library,
+    libraryTotal,
+    shadowEntries,
+    tokens,
+    profile,
+    shadowEntriesTotal,
+    setShadowEntries,
+  ]);
 
   return (
     <>
@@ -233,11 +306,10 @@ export function Library() {
             variant='success'
             onClick={() => {
               if (mode === 'library') {
-                setMode('shadow');
+                setMode('shadowEntries');
               } else {
                 setMode('library');
               }
-              setPage(1);
             }}
             disabled={
               !shadowEntries ||
@@ -270,7 +342,7 @@ export function Library() {
               songsOnPage.length !== 0 ? (
                 songsOnPage.map((song, i) => (
                   <tr>
-                    <td>{(page - 1) * BATCH_SIZE + i + 1}</td>
+                    <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
                     <td>
                       <a href={song.track.external_urls.spotify}>
                         {song.track.name}
