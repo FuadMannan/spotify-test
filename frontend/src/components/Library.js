@@ -231,7 +231,7 @@ export function Library() {
     // NEXT BUTTON
     tempIndices.push(
       <Pagination.Next
-        disabled={page.current === totalContextPages}
+        disabled={page.current === totalContextPages || totalContextPages === 0}
         key={directionKeys[1]}
         onClick={() => {
           const current = page.current + 1;
