@@ -53,7 +53,7 @@ function App() {
     sessionStorage.spotifyTokens ? sessionStorage.spotifyTokens : null
   );
   const [library, setLibrary] = useState(null);
-  const librarySongGenerator = useRef(null);
+  const libraryGenerator = useRef(null);
   const [libraryTotal, setLibraryTotal] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
   const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
@@ -69,9 +69,9 @@ function App() {
 
   useEffect(() => {
     const getSongsBatch = async () => {
-      if (librarySongGenerator.current && library) {
+      if (libraryGenerator.current && library) {
         try {
-          const songsBatch = await librarySongGenerator.current.next();
+          const songsBatch = await libraryGenerator.current.next();
           if (!songsBatch.done && !Array.isArray(songsBatch.value)) {
             setLibraryTotal(songsBatch.value.total);
             songsBatch.value = songsBatch.value.songs;
@@ -99,7 +99,7 @@ function App() {
     permissionGranted,
     library,
     setLibrary,
-    librarySongGenerator,
+    libraryGenerator,
     libraryTotal,
     shadowEntries,
     setShadowEntries,

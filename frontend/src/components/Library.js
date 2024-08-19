@@ -4,7 +4,7 @@ import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
 import { AddSongsButton } from './AddSongsButton';
-import { findShadowEntries } from '../util/queries';
+import { getShadowEntries } from '../util/queries';
 
 function convertMilliseconds(ms) {
   const minutes = Math.floor(ms / 60000);
@@ -270,7 +270,7 @@ export function Library() {
 
   useEffect(() => {
     if (library?.length > 0 && library?.length === libraryTotal) {
-      findShadowEntries(tokens.access_token, profile.country, library).then(
+      getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
           if (entries.length !== shadowEntriesTotal) {
             setShadowEntriesTotal(entries.length);

@@ -35,27 +35,23 @@ async function rateCall(url, body) {
   }
 }
 
-async function fetchSavedSongsBatch(token, market, offset) {
+async function getSavedTracks(token, market, offset) {
   const URL = `${SAVED_TRACKS}?market=${market}&limit=50&offset=${offset}`;
   return await rateCall(URL, header(token));
 }
 
-async function fetchSongsBatch(token, market, ids) {
+async function getTracksInfo(token, market, ids) {
   const URL = `${TRACKS}?market=${market}&ids=${ids.join(',')}`;
   return await rateCall(URL, header(token));
 }
 
-async function saveSongsBatch(token, ids) {
+async function saveTracks(token, ids) {
   const URL = `${SAVED_TRACKS}?ids=${ids.join(',')}`;
   return await rateCall(URL, header(token, 'PUT'));
 }
 
-export async function* libraryGenerator(token, market, initialOffset = 0) {
-  let { total, items } = await fetchSavedSongsBatch(
-    token,
-    market,
-    initialOffset
-  );
+export async function* getLibrary(token, market, initialOffset = 0) {
+  let { total, items } = await getSavedTracks(token, market, initialOffset);
   yield { songs: items, total };
   let remaining = total - items.length - initialOffset;
   const batches = Math.ceil(remaining / 1000);
@@ -64,9 +60,7 @@ export async function* libraryGenerator(token, market, initialOffset = 0) {
     const promises = [];
     for (let j = 1; j <= miniBatch; j++) {
       const batchOffset = i * 1000 + j * 50;
-      promises.push(
-        fetchSavedSongsBatch(token, market, initialOffset + batchOffset)
-      );
+      promises.push(getSavedTracks(token, market, initialOffset + batchOffset));
       remaining - 50 < 0 ? (remaining = 0) : (remaining -= 50);
     }
     try {
@@ -80,7 +74,7 @@ export async function* libraryGenerator(token, market, initialOffset = 0) {
   }
 }
 
-export async function findShadowEntries(token, market, library) {
+export async function getShadowEntries(token, market, library) {
   const batches = Math.ceil(library.length / 1000);
   let searchResults = [];
   let remaining = library.length;
@@ -91,7 +85,7 @@ export async function findShadowEntries(token, market, library) {
       const start = i * 1000 + j * 50;
       const end = start + 50;
       const trackIDs = library.slice(start, end).map((item) => item.track.id);
-      promises.push(fetchSongsBatch(token, market, trackIDs));
+      promises.push(getTracksInfo(token, market, trackIDs));
     }
     try {
       const results = await Promise.all(promises);
@@ -109,7 +103,7 @@ export async function findShadowEntries(token, market, library) {
   return shadowEntries;
 }
 
-export async function addSongs(token, trackIDs) {
+export async function saveTracksBatch(token, trackIDs) {
   const batches = Math.ceil(trackIDs.length / 50);
   const promises = [];
   for (let i = 0; i < batches; i++) {
@@ -117,7 +111,7 @@ export async function addSongs(token, trackIDs) {
       i * 50,
       Math.min((i + 1) * 50, trackIDs.length)
     );
-    promises.push(saveSongsBatch(token, batchIDs));
+    promises.push(saveTracks(token, batchIDs));
   }
   const results = await Promise.all(promises);
   return results;

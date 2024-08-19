@@ -1,11 +1,11 @@
 import { Button } from 'react-bootstrap';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { addSongs } from '../util/queries';
+import { saveTracksBatch } from '../util/queries';
 import { AuthContext } from '../App';
-import { libraryGenerator } from '../util/queries';
+import { getLibrary } from '../util/queries';
 
 export function AddSongsButton() {
-  const { profile, tokens, library, setLibrary, librarySongGenerator } =
+  const { profile, tokens, library, setLibrary, libraryGenerator } =
     useContext(AuthContext);
   const [jsonData, setJsonData] = useState(null);
   const fileInputRef = useRef(null);
@@ -13,10 +13,10 @@ export function AddSongsButton() {
   useEffect(() => {
     if (jsonData) {
       const IDs = jsonData.map((item) => item.id);
-      addSongs(tokens.access_token, IDs)
+      saveTracksBatch(tokens.access_token, IDs)
         .then(() => {
           setJsonData(null);
-          librarySongGenerator.current = libraryGenerator(
+          libraryGenerator.current = getLibrary(
             tokens.access_token,
             profile.country,
             library.length
@@ -25,7 +25,7 @@ export function AddSongsButton() {
         })
         .catch((error) => console.log(error));
     }
-  }, [jsonData, tokens, library, setLibrary, librarySongGenerator, profile]);
+  }, [jsonData, tokens, library, setLibrary, libraryGenerator, profile]);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
