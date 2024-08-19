@@ -4,6 +4,7 @@ import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
 import { AddSongsButton } from './AddSongsButton';
+import { DeleteSongsButton } from './DeleteAllSongsButton';
 import { getShadowEntries } from '../util/queries';
 
 function convertMilliseconds(ms) {
@@ -35,15 +36,13 @@ export function Library() {
 
   // sets songs on page
   const getSongSelection = () => {
-    if (library.length > 0) {
-      const start = (page.current - 1) * BATCH_SIZE;
-      const end = page.current * BATCH_SIZE;
-      const songs =
-        mode === 'library'
-          ? library.slice(start, end)
-          : shadowEntries.slice(start, end);
-      setSongsOnPage(songs);
-    }
+    const start = (page.current - 1) * BATCH_SIZE;
+    const end = page.current * BATCH_SIZE;
+    const songs =
+      mode === 'library'
+        ? library.slice(start, end)
+        : shadowEntries.slice(start, end);
+    setSongsOnPage(songs);
   };
 
   const BATCH_SIZE = 50;
@@ -322,6 +321,9 @@ export function Library() {
           >
             {mode === 'library' ? 'View Shadow Entries' : 'View Library'}
           </Button>
+        </div>
+        <div className='d-inline p-2'>
+          <DeleteSongsButton />
         </div>
       </div>
       <div

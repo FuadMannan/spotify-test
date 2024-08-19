@@ -45,9 +45,17 @@ async function getTracksInfo(token, market, ids) {
   return await rateCall(URL, header(token));
 }
 
-async function saveTracks(token, ids) {
+async function updateTracks(token, ids, method) {
   const URL = `${SAVED_TRACKS}?ids=${ids.join(',')}`;
-  return await rateCall(URL, header(token, 'PUT'));
+  return await rateCall(URL, header(token, method));
+}
+
+async function saveTracks(token, ids) {
+  return await updateTracks(token, ids, 'PUT');
+}
+
+async function deleteTracks(token, ids) {
+  return await updateTracks(token, ids, 'DELETE');
 }
 
 export async function* getLibrary(token, market, initialOffset = 0) {
@@ -114,5 +122,21 @@ export async function saveTracksBatch(token, trackIDs) {
     promises.push(saveTracks(token, batchIDs));
   }
   const results = await Promise.all(promises);
+  return results;
+}
+
+export async function deleteTracksBatch(token, trackIDs) {
+  const batches = Math.ceil(trackIDs.length / 50);
+  const promises = [];
+  const results = [];
+  for (let i = 0; i < batches; i++) {
+    const batchIDs = trackIDs.slice(
+      i * 50,
+      Math.min((i + 1) * 50, trackIDs.length)
+    );
+    promises.push(deleteTracks(token, batchIDs));
+    results.push(await Promise.all(promises));
+    promises.pop();
+  }
   return results;
 }
