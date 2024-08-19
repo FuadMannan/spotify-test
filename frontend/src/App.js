@@ -54,9 +54,9 @@ function App() {
   );
   const [library, setLibrary] = useState(null);
   const librarySongGenerator = useRef(null);
-  const libraryTotal = useRef(-1);
+  const [libraryTotal, setLibraryTotal] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
-  const shadowEntriesTotal = useRef(0);
+  const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
 
   useEffect(() => {
     if (tokens) {
@@ -73,7 +73,7 @@ function App() {
         try {
           const songsBatch = await librarySongGenerator.current.next();
           if (!songsBatch.done && !Array.isArray(songsBatch.value)) {
-            libraryTotal.current = songsBatch.value.total;
+            setLibraryTotal(songsBatch.value.total);
             songsBatch.value = songsBatch.value.songs;
           }
           if (!songsBatch.done && songsBatch.value) {
@@ -104,6 +104,7 @@ function App() {
     shadowEntries,
     setShadowEntries,
     shadowEntriesTotal,
+    setShadowEntriesTotal,
   };
   return (
     <div className='App'>

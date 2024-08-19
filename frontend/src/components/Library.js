@@ -21,6 +21,7 @@ export function Library() {
     shadowEntries,
     setShadowEntries,
     shadowEntriesTotal,
+    setShadowEntriesTotal,
   } = useContext(AuthContext);
   const [page, setPage] = useState({ current: 1, range: [] });
   const [songsOnPage, setSongsOnPage] = useState(null);
@@ -50,8 +51,8 @@ export function Library() {
 
   // sets total pages
   useEffect(() => {
-    const newLibraryTotal = Math.ceil(libraryTotal.current / BATCH_SIZE);
-    const newShadowTotal = Math.ceil(shadowEntriesTotal.current / BATCH_SIZE);
+    const newLibraryTotal = Math.ceil(libraryTotal / BATCH_SIZE);
+    const newShadowTotal = Math.ceil(shadowEntriesTotal / BATCH_SIZE);
     setTotalPages({ library: newLibraryTotal, shadowEntries: newShadowTotal });
   }, [libraryTotal, shadowEntriesTotal]);
 
@@ -268,11 +269,13 @@ export function Library() {
   };
 
   useEffect(() => {
-    if (library && library.length === libraryTotal.current && !shadowEntries) {
+    if (library?.length > 0 && library?.length === libraryTotal) {
       findShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
-          setShadowEntries(entries);
-          shadowEntriesTotal.current = entries.length;
+          if (entries.length !== shadowEntriesTotal) {
+            setShadowEntriesTotal(entries.length);
+            setShadowEntries(entries);
+          }
         }
       );
     }
@@ -283,6 +286,7 @@ export function Library() {
     tokens,
     profile,
     shadowEntriesTotal,
+    setShadowEntriesTotal,
     setShadowEntries,
   ]);
 
@@ -295,7 +299,7 @@ export function Library() {
           <DownloadButton
             data={library.map(extractLibrary)}
             endpoint='http://localhost:8000/download-library'
-            disabled={library.length !== libraryTotal.current}
+            disabled={library.length !== libraryTotal}
           />
         </div>
         <div className='d-inline p-2'>
@@ -312,8 +316,8 @@ export function Library() {
               }
             }}
             disabled={
-              !shadowEntries ||
-              shadowEntries.length !== shadowEntriesTotal.current
+              shadowEntries !== null &&
+              shadowEntries.length !== shadowEntriesTotal
             }
           >
             {mode === 'library' ? 'View Shadow Entries' : 'View Library'}
@@ -370,7 +374,7 @@ export function Library() {
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
                   </tr>
                 ))
-              ) : library.length !== libraryTotal.current ? (
+              ) : library.length !== libraryTotal ? (
                 <tr>
                   <td>
                     <Spinner animation='border' />
