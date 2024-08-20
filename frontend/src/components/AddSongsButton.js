@@ -12,7 +12,7 @@ export function AddSongsButton() {
 
   useEffect(() => {
     if (jsonData) {
-      const IDs = jsonData.map((item) => item.id);
+      const IDs = jsonData.map((item) => item.track_id);
       saveTracksBatch(tokens.access_token, IDs)
         .then(() => {
           setJsonData(null);

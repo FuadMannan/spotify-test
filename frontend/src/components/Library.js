@@ -261,10 +261,10 @@ export function Library() {
 
   const extractLibrary = (item) => {
     const { added_at } = item;
-    const { id, name: track } = item.track;
+    const { id: track_id, name: track_name } = item.track;
     const artists = item.track.artists.map((artist) => artist.name);
-    const { name: album } = item.track.album;
-    return { id, track, artists, album, added_at };
+    const { id: album_id, name: album_name } = item.track.album;
+    return { track_id, track_name, artists, album_id, album_name, added_at };
   };
 
   useEffect(() => {
