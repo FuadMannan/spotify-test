@@ -281,7 +281,6 @@ export function Library() {
   }, [
     library,
     libraryTotal,
-    shadowEntries,
     tokens,
     profile,
     shadowEntriesTotal,
