@@ -314,8 +314,9 @@ export function Library() {
               }
             }}
             disabled={
-              shadowEntries !== null &&
-              shadowEntries.length !== shadowEntriesTotal
+              shadowEntries === null ||
+              (shadowEntries !== null &&
+                shadowEntries.length !== shadowEntriesTotal)
             }
           >
             {mode === 'library' ? 'View Shadow Entries' : 'View Library'}
