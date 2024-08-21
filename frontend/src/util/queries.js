@@ -113,15 +113,14 @@ export async function getShadowEntries(token, market, library) {
 
 export async function saveTracksBatch(token, trackIDs) {
   const batches = Math.ceil(trackIDs.length / 50);
-  const promises = [];
+  const results = [];
   for (let i = 0; i < batches; i++) {
     const batchIDs = trackIDs.slice(
       i * 50,
       Math.min((i + 1) * 50, trackIDs.length)
     );
-    promises.push(saveTracks(token, batchIDs));
+    results.push(await saveTracks(token, batchIDs));
   }
-  const results = await Promise.all(promises);
   return results;
 }
 
