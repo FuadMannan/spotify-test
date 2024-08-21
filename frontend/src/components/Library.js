@@ -1,4 +1,4 @@
-import { Navbar } from './Navbar';
+import { Header } from './Header';
 import { Table, Pagination, Spinner, Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
@@ -290,7 +290,7 @@ export function Library() {
 
   return (
     <>
-      <Navbar />
+      <Header />
       <h1>Library</h1>
       <div>
         <div className='d-inline p-2'>

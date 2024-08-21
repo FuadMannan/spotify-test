@@ -2,8 +2,6 @@ import { Fragment, useContext } from 'react';
 import { Profile } from './Profile';
 import { Button, Card } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Library } from './Library';
 
 async function redirectToAuthCodeFlow(clientId) {
   const verifier = generateCodeVerifier(128);
@@ -46,19 +44,19 @@ async function generateCodeChallenge(codeVerifier) {
 }
 
 export function Landing() {
-  const { clientId, permissionGranted, profile } = useContext(AuthContext);
+  const { clientId, permissionGranted } = useContext(AuthContext);
   return (
     <Fragment>
       {!permissionGranted ? (
         <Card
-          className="h-25 w-25 position-absolute top-50 start-50 translate-middle"
-          data-bs-theme="dark"
+          className='h-25 w-25 position-absolute top-50 start-50 translate-middle'
+          data-bs-theme='dark'
         >
           <Card.Body>
-            <div className="position-relative top-50 start-50 translate-middle">
+            <div className='position-relative top-50 start-50 translate-middle'>
               <Card.Text>Authorization needed to proceed</Card.Text>
               <Button
-                variant="success"
+                variant='success'
                 onClick={async () => await redirectToAuthCodeFlow(clientId)}
               >
                 Proceed to Authorization
@@ -67,12 +65,7 @@ export function Landing() {
           </Card.Body>
         </Card>
       ) : (
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Profile profile={profile} />} />
-            <Route path='/library' element={<Library />} />
-          </Routes>
-        </BrowserRouter>
+        <Profile />
       )}
     </Fragment>
   );

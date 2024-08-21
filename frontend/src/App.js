@@ -1,6 +1,8 @@
 import { useState, createContext, useEffect, useRef } from 'react';
 import './App.css';
 import { Landing } from './components/Landing';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Library } from './components/Library';
 
 export const AuthContext = createContext();
 
@@ -108,11 +110,13 @@ function App() {
   };
   return (
     <div className='App'>
-      <header className='App-header'>
-        <h1>Spotify Test</h1>
-      </header>
       <AuthContext.Provider value={context}>
-        <Landing />
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Landing />} />
+            <Route path='/library' element={<Library />} />
+          </Routes>
+        </BrowserRouter>
       </AuthContext.Provider>
     </div>
   );
