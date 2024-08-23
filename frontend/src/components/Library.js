@@ -308,6 +308,11 @@ export function Library() {
     setShadowEntries,
   ]);
 
+  useEffect(() => {
+    const container = document.getElementById('tableContainer');
+    container.scrollTop = 0;
+  }, [page]);
+
   return (
     <>
       <Header />
