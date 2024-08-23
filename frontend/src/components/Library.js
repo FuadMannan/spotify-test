@@ -263,10 +263,18 @@ export function Library() {
 
   const extractLibrary = (item) => {
     const { added_at } = item;
-    const { id: track_id, name: track_name } = item.track;
-    const artists = item.track.artists.map((artist) => artist.name);
-    const { id: album_id, name: album_name } = item.track.album;
-    return { track_id, track_name, artists, album_id, album_name, added_at };
+    const track = { id: item.track.id, name: item.track.name };
+    const artists = item.track.artists.map((artist) => {
+      return { id: artist.id, name: artist.name };
+    });
+    const album = {
+      id: item.track.album.id,
+      name: item.track.album.name,
+      artists: item.track.album.artists.map((artist) => {
+        return { id: artist.id, name: artist.name };
+      }),
+    };
+    return { track, artists, album, added_at };
   };
 
   useEffect(() => {
