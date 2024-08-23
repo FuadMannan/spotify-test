@@ -354,7 +354,7 @@ export function Library() {
       </div>
       <div
         className='d-flex flex-column align-items-center justify-content-center p-5'
-        style={{ height: '90vh' }}
+        style={{ height: '75vh' }}
       >
         <div id='tableContainer' style={{ overflowY: 'auto', width: '100%' }}>
           <Table striped bordered hover style={{ marginBottom: '0px' }}>
