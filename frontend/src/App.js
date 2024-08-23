@@ -74,14 +74,16 @@ function App() {
       if (libraryGenerator.current && library) {
         try {
           const songsBatch = await libraryGenerator.current.next();
-          if (!songsBatch.done && !Array.isArray(songsBatch.value)) {
-            setLibraryTotal(songsBatch.value.total);
-            songsBatch.value = songsBatch.value.songs;
-          }
-          if (!songsBatch.done && songsBatch.value) {
-            setLibrary((current) => [...current, ...songsBatch.value]);
-          } else if (!songsBatch.done && !songsBatch.value) {
-            throw new Error('Something went wrong');
+          if (!songsBatch.done) {
+            if (!Array.isArray(songsBatch.value)) {
+              setLibraryTotal(songsBatch.value.total);
+              songsBatch.value = songsBatch.value.songs;
+            }
+            if (songsBatch.value) {
+              setLibrary((current) => [...current, ...songsBatch.value]);
+            } else if (!songsBatch.value) {
+              throw new Error('Something went wrong');
+            }
           }
         } catch (error) {
           console.log('Caught error:', error);
