@@ -60,3 +60,48 @@ span#avatar {
   height: 50%;
   width: 50%;
 }
+
+.status {
+  position: relative;
+  height: 25px;
+}
+
+@keyframes slideInAnimation {
+  0% {
+    opacity: 0;
+    top: -24px;
+    z-index: -1;
+  }
+  65% {
+    opacity: 0;
+    top: -12px;
+  }
+  100% {
+    opacity: 1;
+    top: 0px;
+  }
+}
+
+.slideIn {
+  animation: 0.5s ease-in 0s 1 normal forwards running slideInAnimation;
+}
+
+@keyframes slideOutAnimation {
+  0% {
+    opacity: 1;
+    top: 0px;
+  }
+  35% {
+    opacity: 0;
+    top: -12px;
+  }
+  100% {
+    opacity: 0;
+    top: -24px;
+    z-index: -1;
+  }
+}
+
+.slideOut {
+  animation: 0.5s ease-in 0.5s 1 normal forwards running slideOutAnimation;
+}

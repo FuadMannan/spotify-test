@@ -59,6 +59,7 @@ function App() {
   const [libraryTotal, setLibraryTotal] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
   const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
+  const [status, setStatus] = useState(null);
 
   useEffect(() => {
     if (tokens) {
@@ -75,6 +76,7 @@ function App() {
         try {
           const songsBatch = await libraryGenerator.current.next();
           if (!songsBatch.done) {
+            if (!status) setStatus('Loading Library');
             if (!Array.isArray(songsBatch.value)) {
               setLibraryTotal(songsBatch.value.total);
               songsBatch.value = songsBatch.value.songs;
@@ -109,6 +111,8 @@ function App() {
     setShadowEntries,
     shadowEntriesTotal,
     setShadowEntriesTotal,
+    status,
+    setStatus,
   };
   return (
     <div className='App'>

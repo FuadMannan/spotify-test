@@ -23,6 +23,8 @@ export function Library() {
     setShadowEntries,
     shadowEntriesTotal,
     setShadowEntriesTotal,
+    status,
+    setStatus,
   } = useContext(AuthContext);
   const [page, setPage] = useState({ current: 1, range: [] });
   const [songsOnPage, setSongsOnPage] = useState(null);
@@ -269,12 +271,22 @@ export function Library() {
 
   useEffect(() => {
     if (library?.length > 0 && library?.length === libraryTotal) {
+      setStatus('Finding Shadow Entries');
       getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
           if (entries.length !== shadowEntriesTotal) {
             setShadowEntriesTotal(entries.length);
             setShadowEntries(entries);
           }
+          setStatus('Status');
+          const statusDiv = document.getElementsByClassName('status')[0];
+          setTimeout(() => {
+            statusDiv.classList.remove('slideIn');
+            statusDiv.classList.add('slideOut');
+            setTimeout(() => {
+              setStatus(null);
+            }, 1000);
+          }, 2500);
         }
       );
     }
@@ -325,6 +337,20 @@ export function Library() {
         <div className='d-inline p-2'>
           <DeleteSongsButton />
         </div>
+        {status ? (
+          <div className='p-2 slideIn status'>
+            {status}:{' '}
+            {status === 'Loading Library' ? (
+              `${library.length}/${libraryTotal}`
+            ) : status === 'Finding Shadow Entries' ? (
+              <Spinner animation='border' size='sm' />
+            ) : (
+              'Completed'
+            )}
+          </div>
+        ) : (
+          <div className='p-2 slideOut status'></div>
+        )}
       </div>
       <div
         className='d-flex flex-column align-items-center justify-content-center p-5'
