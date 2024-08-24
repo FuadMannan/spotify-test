@@ -4,10 +4,18 @@ import { deleteTracksBatch, getLibrary } from '../util/queries';
 import { AuthContext } from '../App';
 
 export function DeleteSongsButton() {
-  const { profile, tokens, library, setLibrary, libraryGenerator } =
-    useContext(AuthContext);
+  const {
+    profile,
+    tokens,
+    library,
+    setLibrary,
+    libraryGenerator,
+    setStatus,
+    statuses,
+  } = useContext(AuthContext);
 
   const handleClick = () => {
+    setStatus(statuses[3]);
     const IDs = library.map((item) => item.track.id);
     deleteTracksBatch(tokens.access_token, IDs)
       .then(() => {
@@ -16,6 +24,7 @@ export function DeleteSongsButton() {
           profile.country
         );
         setLibrary([]);
+        setStatus(statuses[0]);
       })
       .catch((error) => console.log(error));
   };
