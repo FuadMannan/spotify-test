@@ -5,6 +5,7 @@ import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
 import { AddSongsButton } from './AddSongsButton';
 import { DeleteSongsButton } from './DeleteAllSongsButton';
+import { Status } from './Status';
 import { getShadowEntries } from '../util/queries';
 
 function convertMilliseconds(ms) {
@@ -23,8 +24,8 @@ export function Library() {
     setShadowEntries,
     shadowEntriesTotal,
     setShadowEntriesTotal,
-    status,
     setStatus,
+    statuses,
   } = useContext(AuthContext);
   const [page, setPage] = useState({ current: 1, range: [] });
   const [songsOnPage, setSongsOnPage] = useState(null);
@@ -279,22 +280,14 @@ export function Library() {
 
   useEffect(() => {
     if (library?.length > 0 && library?.length === libraryTotal) {
-      setStatus('Finding Shadow Entries');
+      setStatus(statuses[1]);
       getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
           if (entries.length !== shadowEntriesTotal) {
             setShadowEntriesTotal(entries.length);
             setShadowEntries(entries);
           }
-          setStatus('Status');
-          const statusDiv = document.getElementsByClassName('status')[0];
-          setTimeout(() => {
-            statusDiv.classList.remove('slideIn');
-            statusDiv.classList.add('slideOut');
-            setTimeout(() => {
-              setStatus(null);
-            }, 1000);
-          }, 2500);
+          setStatus(statuses[4]);
         }
       );
     }
@@ -350,20 +343,7 @@ export function Library() {
         <div className='d-inline p-2'>
           <DeleteSongsButton />
         </div>
-        {status ? (
-          <div className='p-2 slideIn status'>
-            {status}:{' '}
-            {status === 'Loading Library' ? (
-              `${library.length}/${libraryTotal}`
-            ) : status === 'Finding Shadow Entries' ? (
-              <Spinner animation='border' size='sm' />
-            ) : (
-              'Completed'
-            )}
-          </div>
-        ) : (
-          <div className='p-2 slideOut status'></div>
-        )}
+        <Status />
       </div>
       <div
         className='d-flex flex-column align-items-center justify-content-center p-5'
