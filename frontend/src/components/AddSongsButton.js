@@ -5,13 +5,21 @@ import { AuthContext } from '../App';
 import { getLibrary } from '../util/queries';
 
 export function AddSongsButton() {
-  const { profile, tokens, library, setLibrary, libraryGenerator } =
-    useContext(AuthContext);
+  const {
+    profile,
+    tokens,
+    library,
+    setLibrary,
+    libraryGenerator,
+    setStatus,
+    statuses,
+  } = useContext(AuthContext);
   const [jsonData, setJsonData] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (jsonData) {
+      setStatus(statuses[2]);
       const IDs = jsonData.map((item) => item.track.id).reverse();
       saveTracksBatch(tokens.access_token, IDs)
         .then(() => {
@@ -22,6 +30,7 @@ export function AddSongsButton() {
             library.length
           );
           setLibrary([...library]);
+          setStatus(statuses[0]);
         })
         .catch((error) => console.log(error));
     }
