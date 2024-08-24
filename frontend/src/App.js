@@ -79,19 +79,28 @@ function App() {
 
   useEffect(() => {
     const getSongsBatch = async () => {
-      if (libraryGenerator.current && library) {
+      if (libraryGenerator.current && library && status === statuses[0]) {
+        let done = false;
         try {
-          const songsBatch = await libraryGenerator.current.next();
-          if (!songsBatch.done) {
-            if (!status) setStatus(statuses[0]);
-            if (!Array.isArray(songsBatch.value)) {
-              setLibraryTotal(songsBatch.value.total);
-              songsBatch.value = songsBatch.value.songs;
-            }
-            if (songsBatch.value) {
-              setLibrary((current) => [...current, ...songsBatch.value]);
-            } else if (!songsBatch.value) {
-              throw new Error('Something went wrong');
+          while (!done) {
+            const songsBatch = await libraryGenerator.current.next();
+            if (!songsBatch.done) {
+              if (!Array.isArray(songsBatch.value)) {
+                setLibraryTotal(songsBatch.value.total);
+                songsBatch.value = songsBatch.value.songs;
+              }
+              if (songsBatch.value) {
+                setLibrary((current) => [...current, ...songsBatch.value]);
+              } else if (!songsBatch.value) {
+                throw new Error('Something went wrong');
+              }
+            } else {
+              done = true;
+              if (library.length === 0) {
+                setStatus(statuses[4]);
+              } else {
+                setStatus(statuses[1]);
+              }
             }
           }
         } catch (error) {

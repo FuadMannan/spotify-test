@@ -57,6 +57,8 @@ export function Profile() {
     setTokens,
     setLibrary,
     libraryGenerator,
+    setStatus,
+    statuses,
   } = useContext(AuthContext);
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export function Profile() {
             result.country
           );
           setLibrary([]);
+          setStatus(statuses[0]);
         }
       }
     };

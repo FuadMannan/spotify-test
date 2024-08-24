@@ -24,6 +24,7 @@ export function Library() {
     setShadowEntries,
     shadowEntriesTotal,
     setShadowEntriesTotal,
+    status,
     setStatus,
     statuses,
   } = useContext(AuthContext);
@@ -279,8 +280,11 @@ export function Library() {
   };
 
   useEffect(() => {
-    if (library?.length > 0 && library?.length === libraryTotal) {
-      setStatus(statuses[1]);
+    if (
+      library?.length > 0 &&
+      library?.length === libraryTotal &&
+      status === statuses[1]
+    ) {
       getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
           if (entries.length !== shadowEntriesTotal) {
