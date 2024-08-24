@@ -132,7 +132,7 @@ function App() {
     statuses,
   };
   return (
-    <div className='App'>
+    <div className='App bg-dark text-bg-dark'>
       <AuthContext.Provider value={context}>
         <BrowserRouter>
           <Routes>
