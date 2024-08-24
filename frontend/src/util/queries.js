@@ -16,7 +16,7 @@ async function rateCall(url, body) {
   let response;
   while (!done) {
     response = await fetch(url, body);
-    if ([429, 500, 502].includes(response.status)) {
+    if ([429, 500, 502, 504].includes(response.status)) {
       const retryAfter = response.headers.get('Retry-After');
       const retryAfterMs = (retryAfter ? parseInt(retryAfter) : 1) * 1000;
       await new Promise((resolve) => setTimeout(resolve, retryAfterMs));
