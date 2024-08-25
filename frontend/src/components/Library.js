@@ -306,7 +306,7 @@ export function Library() {
   ]);
 
   useEffect(() => {
-    const container = document.getElementById('tableContainer');
+    const container = document.getElementById('innerTableContainer');
     container.scrollTop = 0;
   }, [page]);
 
@@ -350,19 +350,19 @@ export function Library() {
         <Status />
       </div>
       <div
+        id='outerTableContainer'
         className='d-flex flex-column align-items-center justify-content-center p-5'
-        style={{ height: '75vh' }}
       >
-        <div id='tableContainer' style={{ overflowY: 'auto', width: '100%' }}>
-          <Table striped bordered hover style={{ marginBottom: '0px' }}>
-            <thead>
+        <div id='innerTableContainer'>
+          <Table striped hover data-bs-theme='dark' className='mb-0'>
+            <thead className='sticky-header'>
               <tr>
-                <th>#</th>
+                <th style={{ width: '5vw' }}>#</th>
                 <th style={{ width: '25vw' }}>Title</th>
                 <th style={{ width: '20vw' }}>Artist</th>
                 <th style={{ width: '20vw' }}>Album</th>
                 <th style={{ width: '15vw' }}>Date added</th>
-                <th>Length</th>
+                <th style={{ width: '5vw' }}>Length</th>
               </tr>
             </thead>
             <tbody>
@@ -373,14 +373,20 @@ export function Library() {
                   <tr>
                     <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
                     <td>
-                      <a href={song.track.external_urls.spotify}>
+                      <a
+                        className='link-body-emphasis'
+                        href={song.track.external_urls.spotify}
+                      >
                         {song.track.name}
                       </a>
                     </td>
                     <td>
                       {song.track.artists.map((artist, i) => (
                         <>
-                          <a href={artist.external_urls.spotify}>
+                          <a
+                            className='link-body-emphasis'
+                            href={artist.external_urls.spotify}
+                          >
                             {artist.name}
                           </a>
                           {song.track.artists.length > 1 &&
@@ -391,7 +397,10 @@ export function Library() {
                       ))}
                     </td>
                     <td>
-                      <a href={song.track.album.external_urls.spotify}>
+                      <a
+                        className='link-body-emphasis'
+                        href={song.track.album.external_urls.spotify}
+                      >
                         {song.track.album.name}
                       </a>
                     </td>
@@ -433,7 +442,9 @@ export function Library() {
             </tbody>
           </Table>
         </div>
-        <Pagination>{paginationItems.map((x) => x)}</Pagination>
+        <Pagination data-bs-theme='dark'>
+          {paginationItems.map((x) => x)}
+        </Pagination>
       </div>
     </>
   );

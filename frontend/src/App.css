@@ -103,3 +103,21 @@ span#avatar {
 .slideOut {
   animation: 0.5s ease-in 0.5s 1 normal forwards running slideOutAnimation;
 }
+
+#outerTableContainer {
+  height: 75vh;
+}
+
+#innerTableContainer {
+  position: relative;
+  overflow-y: auto;
+  width: 100%;
+  max-height: 100%;
+}
+
+.sticky-header th {
+  position: sticky;
+  top: 0px;
+  background-color: #343a40;
+  z-index: 10;
+}
