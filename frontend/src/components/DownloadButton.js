@@ -1,7 +1,6 @@
-import { Button } from "react-bootstrap";
+import { Button } from 'react-bootstrap';
 
 export function DownloadButton(props) {
-
   const handleDownload = () => {
     fetch(props.endpoint, {
       method: 'POST',
@@ -10,13 +9,13 @@ export function DownloadButton(props) {
       },
       body: JSON.stringify(props.data),
     })
-      .then(response => {
+      .then((response) => {
         if (response.ok) {
           return response.blob();
         }
         throw new Error('Network response was not ok.');
       })
-      .then(blob => {
+      .then((blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -26,14 +25,18 @@ export function DownloadButton(props) {
         a.remove();
         window.URL.revokeObjectURL(url);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error downloading the file:', error);
       });
   };
 
   return (
-    <Button variant="success" onClick={handleDownload} disabled={props.disabled}>
+    <Button
+      variant='spotify'
+      onClick={handleDownload}
+      disabled={props.disabled}
+    >
       Download Library as JSON
     </Button>
   );
-};
+}

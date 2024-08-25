@@ -1,5 +1,6 @@
 import { useState, createContext, useEffect, useRef } from 'react';
 import './App.css';
+import './custom.scss';
 import { Landing } from './components/Landing';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Library } from './components/Library';

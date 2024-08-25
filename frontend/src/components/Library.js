@@ -327,7 +327,7 @@ export function Library() {
         </div>
         <div className='d-inline p-2'>
           <Button
-            variant='success'
+            variant='spotify'
             onClick={() => {
               if (mode === 'library') {
                 setMode('shadowEntries');

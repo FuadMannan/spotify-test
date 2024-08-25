@@ -49,14 +49,14 @@ export function Landing() {
     <Fragment>
       {!permissionGranted ? (
         <Card
-          className='h-25 w-25 position-absolute top-50 start-50 translate-middle'
+          className='h-25 w-25 position-absolute top-50 start-50 translate-middle border-spotify bg-body-secondary'
           data-bs-theme='dark'
         >
           <Card.Body>
             <div className='position-relative top-50 start-50 translate-middle'>
               <Card.Text>Authorization needed to proceed</Card.Text>
               <Button
-                variant='success'
+                variant='spotify'
                 onClick={async () => await redirectToAuthCodeFlow(clientId)}
               >
                 Proceed to Authorization

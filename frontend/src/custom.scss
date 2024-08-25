@@ -1,0 +1,44 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/variables-dark';
+@import '~bootstrap/scss/mixins';
+
+$spotify: #1ed760;
+$spotify-hover: #3be477;
+$spotify-active: #1abc54;
+
+$theme-colors: map-merge(
+  $theme-colors,
+  (
+    'spotify': $spotify,
+  )
+);
+
+.btn.btn-spotify {
+  @include button-variant(
+    $spotify,
+    $spotify,
+    $hover-background: $spotify-hover,
+    $hover-border: $spotify-hover,
+    $active-background: $spotify-active,
+    $active-border: $spotify-active,
+    $disabled-color: $gray-800
+  );
+}
+
+.btn {
+  font-weight: 600 !important;
+}
+
+.btn-danger {
+  color: black !important;
+  &:disabled {
+    color: $gray-800 !important;
+  }
+}
+
+.border-spotify {
+  border-color: $spotify;
+}
+
+@import '~bootstrap/scss/bootstrap';

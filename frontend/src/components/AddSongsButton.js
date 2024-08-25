@@ -58,7 +58,7 @@ export function AddSongsButton() {
 
   return (
     <>
-      <Button variant='success' onClick={handleClick} disabled={jsonData}>
+      <Button variant='spotify' onClick={handleClick} disabled={jsonData}>
         {jsonData ? 'Adding songs..' : 'Add songs'}
       </Button>
       <input
