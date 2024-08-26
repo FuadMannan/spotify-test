@@ -104,6 +104,10 @@ span#avatar {
   animation: 0.5s ease-in 0.5s 1 normal forwards running slideOutAnimation;
 }
 
+table {
+  table-layout: fixed;
+}
+
 #outerTableContainer {
   height: 75vh;
 }
@@ -126,4 +130,8 @@ span#avatar {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+body {
+  overflow-y: hidden;
 }

@@ -1,5 +1,12 @@
 import { Header } from './Header';
-import { Table, Pagination, Spinner, Button } from 'react-bootstrap';
+import {
+  Table,
+  Pagination,
+  Spinner,
+  Button,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
@@ -310,6 +317,17 @@ export function Library() {
     container.scrollTop = 0;
   }, [page]);
 
+  const TooltipHelper = ({ children, title, href }) => (
+    <OverlayTrigger
+      placement='top-start'
+      overlay={<Tooltip disabled={true}>{title}</Tooltip>}
+    >
+      <a className='link-body-emphasis' href={href}>
+        {children}
+      </a>
+    </OverlayTrigger>
+  );
+
   return (
     <>
       <Header />
@@ -373,22 +391,24 @@ export function Library() {
                   <tr>
                     <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
                     <td className='truncate'>
-                      <a
-                        className='link-body-emphasis'
+                      <TooltipHelper
+                        title={song.track.name}
                         href={song.track.external_urls.spotify}
                       >
                         {song.track.name}
-                      </a>
+                      </TooltipHelper>
                     </td>
                     <td className='truncate'>
                       {song.track.artists.map((artist, i) => (
                         <>
-                          <a
-                            className='link-body-emphasis'
+                          <TooltipHelper
+                            title={song.track.artists
+                              .map((artist) => artist.name)
+                              .join(', ')}
                             href={artist.external_urls.spotify}
                           >
                             {artist.name}
-                          </a>
+                          </TooltipHelper>
                           {song.track.artists.length > 1 &&
                           i < song.track.artists.length - 1
                             ? ', '
@@ -397,12 +417,12 @@ export function Library() {
                       ))}
                     </td>
                     <td className='truncate'>
-                      <a
-                        className='link-body-emphasis'
+                      <TooltipHelper
+                        title={song.track.album.name}
                         href={song.track.album.external_urls.spotify}
                       >
                         {song.track.album.name}
-                      </a>
+                      </TooltipHelper>
                     </td>
                     <td>{song.added_at}</td>
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
