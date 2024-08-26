@@ -372,7 +372,7 @@ export function Library() {
                 songsOnPage.map((song, i) => (
                   <tr>
                     <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
-                    <td>
+                    <td className='truncate'>
                       <a
                         className='link-body-emphasis'
                         href={song.track.external_urls.spotify}
@@ -380,7 +380,7 @@ export function Library() {
                         {song.track.name}
                       </a>
                     </td>
-                    <td>
+                    <td className='truncate'>
                       {song.track.artists.map((artist, i) => (
                         <>
                           <a
@@ -396,7 +396,7 @@ export function Library() {
                         </>
                       ))}
                     </td>
-                    <td>
+                    <td className='truncate'>
                       <a
                         className='link-body-emphasis'
                         href={song.track.album.external_urls.spotify}

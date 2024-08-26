@@ -121,3 +121,9 @@ span#avatar {
   background-color: #343a40;
   z-index: 10;
 }
+
+.truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
