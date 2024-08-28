@@ -270,22 +270,6 @@ export function Library() {
 
   useEffect(getSongSelection, [page, library, mode, shadowEntries]);
 
-  const extractLibrary = (item) => {
-    const { added_at } = item;
-    const track = { id: item.track.id, name: item.track.name };
-    const artists = item.track.artists.map((artist) => {
-      return { id: artist.id, name: artist.name };
-    });
-    const album = {
-      id: item.track.album.id,
-      name: item.track.album.name,
-      artists: item.track.album.artists.map((artist) => {
-        return { id: artist.id, name: artist.name };
-      }),
-    };
-    return { track, artists, album, added_at };
-  };
-
   useEffect(() => {
     if (
       library?.length > 0 &&
@@ -327,11 +311,7 @@ export function Library() {
       <h1>Library</h1>
       <div>
         <div className='d-inline p-2'>
-          <DownloadButton
-            data={library.map(extractLibrary)}
-            endpoint='http://localhost:8000/download-library'
-            disabled={library.length !== libraryTotal}
-          />
+          <DownloadButton mode={mode} />
         </div>
         <div className='d-inline p-2'>
           <AddSongsButton />
