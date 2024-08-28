@@ -302,15 +302,8 @@ export function Library() {
         }
       );
     }
-  }, [
-    library,
-    libraryTotal,
-    tokens,
-    profile,
-    shadowEntriesTotal,
-    setShadowEntriesTotal,
-    setShadowEntries,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [library, libraryTotal, status]);
 
   useEffect(() => {
     const container = document.getElementById('innerTableContainer');

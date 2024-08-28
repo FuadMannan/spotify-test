@@ -88,7 +88,9 @@ export function Profile() {
             result.country
           );
           setLibrary([]);
-          setStatus(statuses[0]);
+          setTimeout(() => {
+            setStatus(statuses[0]);
+          }, 1000);
         }
       }
     };

@@ -97,11 +97,13 @@ function App() {
               }
             } else {
               done = true;
-              if (library.length === 0) {
-                setStatus(statuses[4]);
-              } else {
-                setStatus(statuses[1]);
-              }
+              setTimeout(() => {
+                if (library.length === 0) {
+                  setStatus(statuses[4]);
+                } else {
+                  setStatus(statuses[1]);
+                }
+              }, 1000);
             }
           }
         } catch (error) {
@@ -110,7 +112,7 @@ function App() {
       }
     };
     getSongsBatch();
-  }, [library]);
+  }, [library, status]);
 
   const context = {
     clientId,

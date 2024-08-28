@@ -12,6 +12,7 @@ export function DeleteSongsButton() {
     libraryGenerator,
     setStatus,
     statuses,
+    setShadowEntries,
   } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -27,7 +28,10 @@ export function DeleteSongsButton() {
           profile.country
         );
         setLibrary([]);
-        setStatus(statuses[0]);
+        setShadowEntries([]);
+        setTimeout(() => {
+          setStatus(statuses[0]);
+        }, 1000);
       })
       .catch((error) => console.log(error));
   };

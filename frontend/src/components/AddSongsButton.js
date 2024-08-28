@@ -30,7 +30,9 @@ export function AddSongsButton() {
             library.length
           );
           setLibrary([...library]);
-          setStatus(statuses[0]);
+          setTimeout(() => {
+            setStatus(statuses[0]);
+          }, 1000);
         })
         .catch((error) => console.log(error));
     }
