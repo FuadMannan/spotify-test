@@ -12,16 +12,19 @@ const header = (token, requestMethod = 'GET') => {
 };
 
 async function rateCall(url, body) {
-  let done = false;
   let response;
-  while (!done) {
+  for (let i = 0; i <= 20; i++) {
+    if (i === 20) {
+      console.error('Issue fetching URL:', url);
+      return {};
+    }
     response = await fetch(url, body);
     if ([429, 500, 502, 504].includes(response.status)) {
       const retryAfter = response.headers.get('Retry-After');
-      const retryAfterMs = (retryAfter ? parseInt(retryAfter) : 1) * 1000;
+      const retryAfterMs = (retryAfter ? parseInt(retryAfter) : 1 + i) * 1000;
       await new Promise((resolve) => setTimeout(resolve, retryAfterMs));
     } else if (response.ok) {
-      done = true;
+      break;
     } else {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
