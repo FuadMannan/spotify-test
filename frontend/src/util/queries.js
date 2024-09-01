@@ -38,8 +38,8 @@ async function rateCall(url, body) {
   }
 }
 
-async function getSavedTracks(token, market, offset) {
-  const URL = `${SAVED_TRACKS}?market=${market}&limit=50&offset=${offset}`;
+async function getSavedTracks(token, offset) {
+  const URL = `${SAVED_TRACKS}?limit=50&offset=${offset}`;
   return await rateCall(URL, header(token));
 }
 
@@ -61,8 +61,8 @@ async function deleteTracks(token, ids) {
   return await updateTracks(token, ids, 'DELETE');
 }
 
-export async function* getLibrary(token, market, initialOffset = 0) {
-  let { total, items } = await getSavedTracks(token, market, initialOffset);
+export async function* getLibrary(token, initialOffset = 0) {
+  let { total, items } = await getSavedTracks(token, initialOffset);
   yield { songs: items, total };
   let remaining = total - items.length - initialOffset;
   const batches = Math.ceil(remaining / 1000);
@@ -71,12 +71,12 @@ export async function* getLibrary(token, market, initialOffset = 0) {
     const promises = [];
     for (let j = 1; j <= miniBatch; j++) {
       const batchOffset = i * 1000 + j * 50;
-      promises.push(getSavedTracks(token, market, initialOffset + batchOffset));
-      remaining - 50 < 0 ? (remaining = 0) : (remaining -= 50);
+      promises.push(getSavedTracks(token, initialOffset + batchOffset));
     }
     try {
       const results = await Promise.all(promises);
       items = results.map((x) => x.items).flat();
+      remaining -= items.length;
       yield [...items];
     } catch (error) {
       console.error('Error fetching songs:', error);

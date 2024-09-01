@@ -5,7 +5,6 @@ import { AuthContext } from '../App';
 
 export function DeleteSongsButton() {
   const {
-    profile,
     tokens,
     library,
     setLibrary,
@@ -23,10 +22,7 @@ export function DeleteSongsButton() {
     const IDs = library.map((item) => item.track.id);
     deleteTracksBatch(tokens.access_token, IDs)
       .then(() => {
-        libraryGenerator.current = getLibrary(
-          tokens.access_token,
-          profile.country
-        );
+        libraryGenerator.current = getLibrary(tokens.access_token);
         setLibrary([]);
         setShadowEntries([]);
         setTimeout(() => {

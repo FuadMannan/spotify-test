@@ -83,10 +83,7 @@ export function Profile() {
         if (profile.id === '' && !Object.keys(result).includes('error')) {
           setProfile(result);
           sessionStorage.setItem('spotifyProfile', JSON.stringify(result));
-          libraryGenerator.current = getLibrary(
-            tokens.access_token,
-            result.country
-          );
+          libraryGenerator.current = getLibrary(tokens.access_token);
           setLibrary([]);
           setTimeout(() => {
             setStatus(statuses[0]);

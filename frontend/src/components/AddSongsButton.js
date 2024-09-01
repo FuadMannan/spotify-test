@@ -26,7 +26,6 @@ export function AddSongsButton() {
           setJsonData(null);
           libraryGenerator.current = getLibrary(
             tokens.access_token,
-            profile.country,
             library.length
           );
           setLibrary([...library]);
