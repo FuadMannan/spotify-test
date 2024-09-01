@@ -3,9 +3,9 @@ import {
   Table,
   Pagination,
   Spinner,
-  Button,
   OverlayTrigger,
   Tooltip,
+  Dropdown,
 } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
@@ -317,23 +317,26 @@ export function Library() {
           <AddSongsButton />
         </div>
         <div className='d-inline p-2'>
-          <Button
-            variant='spotify'
-            onClick={() => {
-              if (mode === 'library') {
-                setMode('shadowEntries');
-              } else {
-                setMode('library');
+          <Dropdown data-bs-theme='dark'>
+            <Dropdown.Toggle
+              variant='spotify'
+              disabled={
+                shadowEntries === null ||
+                (shadowEntries !== null &&
+                  shadowEntries.length !== shadowEntriesTotal)
               }
-            }}
-            disabled={
-              shadowEntries === null ||
-              (shadowEntries !== null &&
-                shadowEntries.length !== shadowEntriesTotal)
-            }
-          >
-            {mode === 'library' ? 'View Shadow Entries' : 'View Library'}
-          </Button>
+            >
+              Mode: {mode === 'library' ? 'Library' : 'Shadow Entries'}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setMode('library')}>
+                Library
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => setMode('shadowEntries')}>
+                Shadow Entries
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
         <div className='d-inline p-2'>
           <DeleteSongsButton />

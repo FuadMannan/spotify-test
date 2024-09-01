@@ -135,3 +135,11 @@ table {
 body {
   overflow-y: hidden;
 }
+
+div.dropdown {
+  display: inline;
+}
+
+.btn.dropdown-toggle {
+  width: 11vw;
+}

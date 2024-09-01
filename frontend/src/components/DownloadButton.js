@@ -61,9 +61,7 @@ export function DownloadButton(props) {
       onClick={handleDownload}
       disabled={library.length !== libraryTotal}
     >
-      {props.mode === 'library'
-        ? 'Download Library as JSON'
-        : 'Download Shadow Entries as JSON'}
+      Download as JSON
     </Button>
   );
 }
