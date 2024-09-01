@@ -109,7 +109,10 @@ export async function getShadowEntries(token, market, library) {
     }
   }
   const shadowEntries = library.filter((item, i) => {
-    return item.track.album.id !== searchResults[i].album.id;
+    return (
+      item.track.album.id !== searchResults[i].album.id ||
+      item.track.id !== searchResults[i].id
+    );
   });
   return shadowEntries;
 }
