@@ -43,8 +43,10 @@ async function getSavedTracks(token, offset) {
   return await rateCall(URL, header(token));
 }
 
-async function getTracksInfo(token, market, ids) {
-  const URL = `${TRACKS}?market=${market}&ids=${ids.join(',')}`;
+async function getTracksInfoWithMarket(token, ids, market = null) {
+  const URL = `${TRACKS}?${market ? `market=${market}&` : ''}ids=${ids.join(
+    ','
+  )}`;
   return await rateCall(URL, header(token));
 }
 
@@ -96,7 +98,7 @@ export async function getShadowEntries(token, market, library) {
       const start = i * 1000 + j * 50;
       const end = start + 50;
       const trackIDs = library.slice(start, end).map((item) => item.track.id);
-      promises.push(getTracksInfo(token, market, trackIDs));
+      promises.push(getTracksInfoWithMarket(token, trackIDs, market));
     }
     try {
       const results = await Promise.all(promises);
