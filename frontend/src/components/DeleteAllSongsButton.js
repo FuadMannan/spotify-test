@@ -27,7 +27,7 @@ export function DeleteSongsButton() {
         setShadowEntries({ identified: [], marketCorrected: [] });
         setTimeout(() => {
           setStatus(statuses[0]);
-        }, 1000);
+        }, 3000);
       })
       .catch((error) => console.log(error));
   };
