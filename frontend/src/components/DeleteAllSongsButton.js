@@ -24,7 +24,7 @@ export function DeleteSongsButton() {
       .then(() => {
         libraryGenerator.current = getLibrary(tokens.access_token);
         setLibrary([]);
-        setShadowEntries([]);
+        setShadowEntries({ identified: [], marketCorrected: [] });
         setTimeout(() => {
           setStatus(statuses[0]);
         }, 1000);

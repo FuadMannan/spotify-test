@@ -52,7 +52,7 @@ export function Library() {
     const songs =
       mode === 'library'
         ? library.slice(start, end)
-        : shadowEntries.slice(start, end);
+        : shadowEntries.identified.slice(start, end);
     setSongsOnPage(songs);
   };
 
@@ -278,8 +278,8 @@ export function Library() {
     ) {
       getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
-          if (entries.length !== shadowEntriesTotal) {
-            setShadowEntriesTotal(entries.length);
+          if (entries.identified.length !== shadowEntriesTotal) {
+            setShadowEntriesTotal(entries.identified.length);
             setShadowEntries(entries);
           }
           setStatus(statuses[4]);
@@ -323,17 +323,17 @@ export function Library() {
               disabled={
                 shadowEntries === null ||
                 (shadowEntries !== null &&
-                  shadowEntries.length !== shadowEntriesTotal)
+                  shadowEntries.identified.length !== shadowEntriesTotal)
               }
             >
-              Mode: {mode === 'library' ? 'Library' : 'Shadow Entries'}
+              Mode: {mode === 'library' ? 'Library' : 'Shadow Songs'}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item onClick={() => setMode('library')}>
                 Library
               </Dropdown.Item>
               <Dropdown.Item onClick={() => setMode('shadowEntries')}>
-                Shadow Entries
+                Shadow Songs
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

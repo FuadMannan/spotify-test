@@ -110,13 +110,17 @@ export async function getShadowEntries(token, market, library) {
       return [];
     }
   }
-  const shadowEntries = library.filter((item, i) => {
-    return (
-      item.track.album.id !== searchResults[i].album.id ||
-      item.track.id !== searchResults[i].id
-    );
-  });
-  return shadowEntries;
+  const results = { identified: [], marketCorrected: [] };
+  for (let i = 0; i < library.length; i++) {
+    if (
+      library[i].track.album.id !== searchResults[i].album.id ||
+      library[i].track.id !== searchResults[i].id
+    ) {
+      results.identified.push(library[i]);
+      results.marketCorrected.push(searchResults[i]);
+    }
+  }
+  return results;
 }
 
 export async function saveTracksBatch(token, trackIDs) {
