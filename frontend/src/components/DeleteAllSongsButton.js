@@ -12,6 +12,7 @@ export function DeleteSongsButton() {
     setStatus,
     statuses,
     setShadowEntries,
+    setShadowEntriesTotal,
   } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
 
@@ -25,6 +26,7 @@ export function DeleteSongsButton() {
         libraryGenerator.current = getLibrary(tokens.access_token);
         setLibrary([]);
         setShadowEntries({ identified: [], marketCorrected: [] });
+        setShadowEntriesTotal(0);
         setTimeout(() => {
           setStatus(statuses[0]);
         }, 3000);
