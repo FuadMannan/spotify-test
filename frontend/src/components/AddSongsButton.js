@@ -1,4 +1,4 @@
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { saveTracksBatch } from '../util/queries';
 import { AuthContext } from '../App';
@@ -15,8 +15,12 @@ export function AddSongsButton() {
     setStatus,
     statuses,
   } = useContext(AuthContext);
+  const [showModal, setShowModal] = useState(false);
   const [jsonData, setJsonData] = useState(null);
   const fileInputRef = useRef(null);
+
+  const handleClose = () => setShowModal(false);
+  const handleshow = () => setShowModal(true);
 
   useEffect(() => {
     if (jsonData) {
@@ -62,7 +66,7 @@ export function AddSongsButton() {
     <>
       <Button
         variant='spotify'
-        onClick={handleClick}
+        onClick={handleshow}
         disabled={jsonData || ![null, statuses[4]].includes(status)}
       >
         {jsonData ? 'Adding songs..' : 'Add songs'}
@@ -74,6 +78,31 @@ export function AddSongsButton() {
         onChange={handleFileUpload}
         style={{ display: 'none' }}
       />
+      <Modal data-bs-theme='dark' className='text-light' show={showModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Warning</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Tracks being saved will not be added in the exact order found in the
+          upload file. This is due to how Spotify handles requests and cannot be
+          avoided. If you would like songs added in order, you may have to do so
+          manually. Sorry for the inconvenience.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='secondary' onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant='spotify'
+            onClick={() => {
+              handleClick();
+              handleClose();
+            }}
+          >
+            Proceed
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
