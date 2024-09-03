@@ -272,11 +272,7 @@ export function Library() {
   useEffect(getSongSelection, [page, library, mode, shadowEntries]);
 
   useEffect(() => {
-    if (
-      library?.length > 0 &&
-      library?.length === libraryTotal &&
-      status === statuses[1]
-    ) {
+    if (status === statuses[1]) {
       getShadowEntries(tokens.access_token, profile.country, library).then(
         (entries) => {
           if (entries.identified.length !== shadowEntriesTotal) {
