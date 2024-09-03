@@ -12,6 +12,7 @@ import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
 import { AddSongsButton } from './AddSongsButton';
 import { DeleteSongsButton } from './DeleteAllSongsButton';
+import { ReplaceShadowEntriesButton } from './ReplaceShadowEntriesButton';
 import { Status } from './Status';
 import { getShadowEntries } from '../util/queries';
 
@@ -335,6 +336,9 @@ export function Library() {
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
+        </div>
+        <div className='d-inline p-2'>
+          <ReplaceShadowEntriesButton />
         </div>
         <div className='d-inline p-2'>
           <DeleteSongsButton />
