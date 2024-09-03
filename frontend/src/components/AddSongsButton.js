@@ -11,6 +11,7 @@ export function AddSongsButton() {
     library,
     setLibrary,
     libraryGenerator,
+    status,
     setStatus,
     statuses,
   } = useContext(AuthContext);
@@ -59,7 +60,11 @@ export function AddSongsButton() {
 
   return (
     <>
-      <Button variant='spotify' onClick={handleClick} disabled={jsonData}>
+      <Button
+        variant='spotify'
+        onClick={handleClick}
+        disabled={jsonData || ![null, statuses[4]].includes(status)}
+      >
         {jsonData ? 'Adding songs..' : 'Add songs'}
       </Button>
       <input

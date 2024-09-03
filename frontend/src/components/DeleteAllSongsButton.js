@@ -9,6 +9,7 @@ export function DeleteSongsButton() {
     library,
     setLibrary,
     libraryGenerator,
+    status,
     setStatus,
     statuses,
     setShadowEntries,
@@ -39,7 +40,11 @@ export function DeleteSongsButton() {
       <Button
         variant='danger'
         onClick={handleshow}
-        disabled={library === null || library.length === 0}
+        disabled={
+          library === null ||
+          library.length === 0 ||
+          ![null, statuses[4]].includes(status)
+        }
       >
         Delete ALL Songs
       </Button>

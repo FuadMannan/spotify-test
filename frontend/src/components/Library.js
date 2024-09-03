@@ -321,9 +321,7 @@ export function Library() {
             <Dropdown.Toggle
               variant='spotify'
               disabled={
-                shadowEntries === null ||
-                (shadowEntries !== null &&
-                  shadowEntries.identified.length !== shadowEntriesTotal)
+                ![null, statuses[4]].includes(status) || shadowEntries === null
               }
             >
               Mode: {mode === 'library' ? 'Library' : 'Shadow Songs'}

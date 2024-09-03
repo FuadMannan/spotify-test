@@ -3,7 +3,8 @@ import { Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 
 export function DownloadButton(props) {
-  const { library, libraryTotal, shadowEntries } = useContext(AuthContext);
+  const { library, libraryTotal, shadowEntries, status, statuses } =
+    useContext(AuthContext);
   const endpoint = 'http://localhost:8000/download-library';
 
   const handleDownload = () => {
@@ -40,7 +41,9 @@ export function DownloadButton(props) {
     <Button
       variant='spotify'
       onClick={handleDownload}
-      disabled={library.length !== libraryTotal}
+      disabled={
+        library.length !== libraryTotal || ![null, statuses[4]].includes(status)
+      }
     >
       Download as JSON
     </Button>
