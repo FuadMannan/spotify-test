@@ -5,7 +5,6 @@ import {
   Spinner,
   OverlayTrigger,
   Tooltip,
-  Dropdown,
 } from 'react-bootstrap';
 import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
@@ -15,6 +14,7 @@ import { DeleteSongsButton } from './DeleteAllSongsButton';
 import { ReplaceShadowEntriesButton } from './ReplaceShadowEntriesButton';
 import { Status } from './Status';
 import { getShadowEntries } from '../util/queries';
+import { useLocation } from 'react-router-dom';
 
 function convertMilliseconds(ms) {
   const minutes = Math.floor(ms / 60000);
@@ -45,6 +45,14 @@ export function Library() {
     shadowEntries: 0,
   });
   const [mode, setMode] = useState('library');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.mode) {
+      setMode(location.state.mode);
+    }
+  }, [location.state]);
 
   // sets songs on page
   const getSongSelection = () => {
@@ -312,26 +320,6 @@ export function Library() {
         </div>
         <div className='d-inline p-2'>
           <AddSongsButton />
-        </div>
-        <div className='d-inline p-2'>
-          <Dropdown data-bs-theme='dark'>
-            <Dropdown.Toggle
-              variant='spotify'
-              disabled={
-                ![null, statuses[4]].includes(status) || shadowEntries === null
-              }
-            >
-              Mode: {mode === 'library' ? 'Library' : 'Shadow Songs'}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setMode('library')}>
-                Library
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setMode('shadowEntries')}>
-                Shadow Songs
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
         </div>
         <div className='d-inline p-2'>
           <ReplaceShadowEntriesButton />
