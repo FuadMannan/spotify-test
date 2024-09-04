@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useContext } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import { Header } from './Header';
 import { getLibrary } from '../util/queries';
 
 function accessTokenQuery(clientId, code) {
@@ -108,7 +107,6 @@ export function Profile() {
         </Fragment>
       ) : (
         <div>
-          <Header />
           <h1>Profile Data</h1>
           <section
             id='profile'

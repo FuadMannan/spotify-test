@@ -4,6 +4,7 @@ import './custom.scss';
 import { Landing } from './components/Landing';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Library } from './components/Library';
+import { Header } from './components/Header';
 
 export const AuthContext = createContext();
 
@@ -138,6 +139,7 @@ function App() {
     <div className='App bg-dark text-bg-dark'>
       <AuthContext.Provider value={context}>
         <BrowserRouter>
+          <Header />
           <Routes>
             <Route path='/' element={<Landing />} />
             <Route path='/library' element={<Library />} />

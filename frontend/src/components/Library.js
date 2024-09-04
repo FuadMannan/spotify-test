@@ -1,4 +1,3 @@
-import { Header } from './Header';
 import {
   Table,
   Pagination,
@@ -312,7 +311,6 @@ export function Library() {
 
   return (
     <>
-      <Header />
       <h1>Library</h1>
       <div>
         <div className='d-inline p-2'>
