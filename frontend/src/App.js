@@ -1,17 +1,16 @@
 import { useState, createContext, useEffect, useRef } from 'react';
 import './App.css';
 import './custom.scss';
-import { Landing } from './components/Landing';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Profile } from './components/Profile';
 import { Library } from './components/Library';
 import { Header } from './components/Header';
+import { AuthGuard } from './components/AuthGuard';
 
 export const AuthContext = createContext();
 
 function getSession(key) {
-  if (Object.keys(sessionStorage).includes(key))
-    return JSON.parse(sessionStorage.getItem(key));
-  return false;
+  return JSON.parse(sessionStorage.getItem(key));
 }
 
 async function refreshTokens(clientId) {
@@ -45,7 +44,7 @@ function App() {
     'spotifyAuthorized',
     code != null || sessionStorage.spotifyAuthorized === 'true'
   );
-  const permissionGranted = getSession('spotifyAuthorized');
+  const isAuthenticated = getSession('spotifyAuthorized') !== false;
   const [profile, setProfile] = useState(
     getSession('spotifyProfile') || {
       id: '',
@@ -122,7 +121,6 @@ function App() {
     setProfile,
     tokens,
     setTokens,
-    permissionGranted,
     library,
     setLibrary,
     libraryGenerator,
@@ -141,8 +139,22 @@ function App() {
         <BrowserRouter>
           <Header />
           <Routes>
-            <Route path='/' element={<Landing />} />
-            <Route path='/library' element={<Library />} />
+            <Route
+              path='/'
+              element={
+                <AuthGuard isAuthenticated={isAuthenticated}>
+                  <Profile />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path='/library'
+              element={
+                <AuthGuard isAuthenticated={isAuthenticated}>
+                  <Library />
+                </AuthGuard>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </AuthContext.Provider>

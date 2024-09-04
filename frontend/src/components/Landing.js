@@ -1,5 +1,4 @@
 import { Fragment, useContext } from 'react';
-import { Profile } from './Profile';
 import { Button, Card } from 'react-bootstrap';
 import { AuthContext } from '../App';
 
@@ -44,29 +43,25 @@ async function generateCodeChallenge(codeVerifier) {
 }
 
 export function Landing() {
-  const { clientId, permissionGranted } = useContext(AuthContext);
+  const { clientId } = useContext(AuthContext);
   return (
     <Fragment>
-      {!permissionGranted ? (
-        <Card
-          className='h-25 w-25 position-absolute top-50 start-50 translate-middle border-spotify bg-body-secondary'
-          data-bs-theme='dark'
-        >
-          <Card.Body>
-            <div className='position-relative top-50 start-50 translate-middle'>
-              <Card.Text>Authorization needed to proceed</Card.Text>
-              <Button
-                variant='spotify'
-                onClick={async () => await redirectToAuthCodeFlow(clientId)}
-              >
-                Proceed to Authorization
-              </Button>
-            </div>
-          </Card.Body>
-        </Card>
-      ) : (
-        <Profile />
-      )}
+      <Card
+        className='h-25 w-25 position-absolute top-50 start-50 translate-middle border-spotify bg-body-secondary'
+        data-bs-theme='dark'
+      >
+        <Card.Body>
+          <div className='position-relative top-50 start-50 translate-middle'>
+            <Card.Text>Authorization needed to proceed</Card.Text>
+            <Button
+              variant='spotify'
+              onClick={async () => await redirectToAuthCodeFlow(clientId)}
+            >
+              Proceed to Authorization
+            </Button>
+          </div>
+        </Card.Body>
+      </Card>
     </Fragment>
   );
 }
