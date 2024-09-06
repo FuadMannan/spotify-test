@@ -1,6 +1,7 @@
 const API = 'https://api.spotify.com/v1';
 const TRACKS = `${API}/tracks`;
 const SAVED_TRACKS = `${API}/me/tracks`;
+const SAVED_ALBUMS = `${API}/me/albums`;
 
 const header = (token, requestMethod = 'GET') => {
   return {
@@ -38,12 +39,18 @@ async function rateCall(url, body) {
   }
 }
 
-async function getSavedTracks(token, offset) {
-  const URL = `${SAVED_TRACKS}?limit=50&offset=${offset}`;
+async function getSavedItems(token, itemType, offset) {
+  let endpoint;
+  if (itemType === 'tracks') {
+    endpoint = SAVED_TRACKS;
+  } else if (itemType === 'albums') {
+    endpoint = SAVED_ALBUMS;
+  }
+  const URL = `${endpoint}?limit=50&offset=${offset}`;
   return await rateCall(URL, header(token));
 }
 
-async function getTracksInfoWithMarket(token, ids, market = null) {
+async function getItemsInfoWithMarket(token, ids, market = null) {
   const URL = `${TRACKS}?${market ? `market=${market}&` : ''}ids=${ids.join(
     ','
   )}`;
@@ -63,8 +70,12 @@ async function deleteTracks(token, ids) {
   return await updateTracks(token, ids, 'DELETE');
 }
 
-export async function* getLibrary(token, initialOffset = 0) {
-  let { total, items } = await getSavedTracks(token, initialOffset);
+export async function* getLibrary(
+  token,
+  itemType = 'tracks',
+  initialOffset = 0
+) {
+  let { total, items } = await getSavedItems(token, itemType, initialOffset);
   yield { songs: items, total };
   let remaining = total - items.length - initialOffset;
   const batches = Math.ceil(remaining / 1000);
@@ -73,7 +84,9 @@ export async function* getLibrary(token, initialOffset = 0) {
     const promises = [];
     for (let j = 1; j <= miniBatch; j++) {
       const batchOffset = i * 1000 + j * 50;
-      promises.push(getSavedTracks(token, initialOffset + batchOffset));
+      promises.push(
+        getSavedItems(token, itemType, initialOffset + batchOffset)
+      );
     }
     try {
       const results = await Promise.all(promises);
@@ -98,7 +111,7 @@ export async function getShadowEntries(token, market, library) {
       const start = i * 1000 + j * 50;
       const end = start + 50;
       const trackIDs = library.slice(start, end).map((item) => item.track.id);
-      promises.push(getTracksInfoWithMarket(token, trackIDs, market));
+      promises.push(getItemsInfoWithMarket(token, trackIDs, market));
     }
     try {
       const results = await Promise.all(promises);
