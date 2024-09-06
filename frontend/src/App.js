@@ -55,7 +55,7 @@ function App() {
   const [tokens, setTokens] = useState(
     sessionStorage.spotifyTokens ? sessionStorage.spotifyTokens : null
   );
-  const [library, setLibrary] = useState(null);
+  const [libraryTracks, setLibraryTracks] = useState([]);
   const libraryGenerator = useRef(null);
   const [libraryTotal, setLibraryTotal] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
@@ -80,7 +80,7 @@ function App() {
 
   useEffect(() => {
     const getSongsBatch = async () => {
-      if (libraryGenerator.current && library && status === statuses[0]) {
+      if (libraryGenerator.current && libraryTracks && status === statuses[0]) {
         let done = false;
         try {
           while (!done) {
@@ -91,14 +91,17 @@ function App() {
                 songsBatch.value = songsBatch.value.songs;
               }
               if (songsBatch.value) {
-                setLibrary((current) => [...current, ...songsBatch.value]);
+                setLibraryTracks((current) => [
+                  ...current,
+                  ...songsBatch.value,
+                ]);
               } else if (!songsBatch.value) {
                 throw new Error('Something went wrong');
               }
             } else {
               done = true;
               setTimeout(() => {
-                if (library.length === 0) {
+                if (libraryTracks.length === 0) {
                   setStatus(statuses[4]);
                 } else {
                   setStatus(statuses[1]);
@@ -112,7 +115,7 @@ function App() {
       }
     };
     getSongsBatch();
-  }, [library, status]);
+  }, [libraryTracks, status]);
 
   const context = {
     clientId,
@@ -121,8 +124,8 @@ function App() {
     setProfile,
     tokens,
     setTokens,
-    library,
-    setLibrary,
+    libraryTracks,
+    setLibraryTracks,
     libraryGenerator,
     libraryTotal,
     shadowEntries,

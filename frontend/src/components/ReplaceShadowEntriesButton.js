@@ -10,8 +10,8 @@ import {
 export function ReplaceShadowEntriesButton(props) {
   const {
     tokens,
-    library,
-    setLibrary,
+    libraryTracks,
+    setLibraryTracks,
     libraryGenerator,
     shadowEntries,
     status,
@@ -33,12 +33,12 @@ export function ReplaceShadowEntriesButton(props) {
       setStatus(statuses[2]);
       IDs.marketCorrected = IDs.marketCorrected.reverse();
       saveTracksBatch(tokens.access_token, IDs.marketCorrected).then(() => {
-        const newLibrary = library.filter((x) => {
+        const newLibrary = libraryTracks.filter((x) => {
           return !IDs.shadowEntries.includes(x.track.id);
         });
         setTimeout(() => {
           console.log(`new library length: ${newLibrary.length}`);
-          setLibrary(newLibrary);
+          setLibraryTracks(newLibrary);
           libraryGenerator.current = getLibrary(
             tokens.access_token,
             newLibrary.length

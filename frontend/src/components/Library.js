@@ -23,7 +23,7 @@ function convertMilliseconds(ms) {
 
 export function Library() {
   const {
-    library,
+    libraryTracks,
     libraryTotal,
     tokens,
     profile,
@@ -59,7 +59,7 @@ export function Library() {
     const end = page.current * BATCH_SIZE;
     const songs =
       mode === 'library'
-        ? library.slice(start, end)
+        ? libraryTracks.slice(start, end)
         : shadowEntries.identified.slice(start, end);
     setSongsOnPage(songs);
   };
@@ -276,22 +276,24 @@ export function Library() {
     setPaginationItems(tempIndices);
   }, [totalPaginationItems, page, totalPages, mode]);
 
-  useEffect(getSongSelection, [page, library, mode, shadowEntries]);
+  useEffect(getSongSelection, [page, libraryTracks, mode, shadowEntries]);
 
   useEffect(() => {
     if (status === statuses[1]) {
-      getShadowEntries(tokens.access_token, profile.country, library).then(
-        (entries) => {
-          if (entries.identified.length !== shadowEntriesTotal) {
-            setShadowEntriesTotal(entries.identified.length);
-            setShadowEntries(entries);
-          }
-          setStatus(statuses[4]);
+      getShadowEntries(
+        tokens.access_token,
+        profile.country,
+        libraryTracks
+      ).then((entries) => {
+        if (entries.identified.length !== shadowEntriesTotal) {
+          setShadowEntriesTotal(entries.identified.length);
+          setShadowEntries(entries);
         }
-      );
+        setStatus(statuses[4]);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [library, libraryTotal, status]);
+  }, [libraryTracks, libraryTotal, status]);
 
   useEffect(() => {
     const container = document.getElementById('innerTableContainer');
@@ -388,7 +390,7 @@ export function Library() {
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
                   </tr>
                 ))
-              ) : library.length !== libraryTotal ? (
+              ) : libraryTracks.length !== libraryTotal ? (
                 <tr>
                   <td>
                     <Spinner animation='border' />

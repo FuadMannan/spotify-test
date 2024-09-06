@@ -3,12 +3,12 @@ import { Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 
 export function DownloadButton(props) {
-  const { library, libraryTotal, shadowEntries, status, statuses } =
+  const { libraryTracks, libraryTotal, shadowEntries, status, statuses } =
     useContext(AuthContext);
   const endpoint = 'http://localhost:8000/download-library';
 
   const handleDownload = () => {
-    const data = props.mode === 'library' ? library : shadowEntries;
+    const data = props.mode === 'library' ? libraryTracks : shadowEntries;
     fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -42,7 +42,8 @@ export function DownloadButton(props) {
       variant='spotify'
       onClick={handleDownload}
       disabled={
-        library.length !== libraryTotal || ![null, statuses[4]].includes(status)
+        libraryTracks.length !== libraryTotal ||
+        ![null, statuses[4]].includes(status)
       }
     >
       Download as JSON

@@ -3,7 +3,7 @@ import { AuthContext } from '../App';
 import { Spinner } from 'react-bootstrap';
 
 export function Status() {
-  const { status, setStatus, statuses, library, libraryTotal } =
+  const { status, setStatus, statuses, libraryTracks, libraryTotal } =
     useContext(AuthContext);
   const [inProgress, setInProgress] = useState(false);
   const [transition, setTransition] = useState('slideIn');
@@ -29,7 +29,7 @@ export function Status() {
             <>
               {status}:{' '}
               {status === statuses[0] ? (
-                `${library.length}/${libraryTotal}`
+                `${libraryTracks.length}/${libraryTotal}`
               ) : (
                 <Spinner animation='border' size='sm' className='ms-3' />
               )}

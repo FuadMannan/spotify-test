@@ -6,8 +6,8 @@ import { AuthContext } from '../App';
 export function DeleteSongsButton() {
   const {
     tokens,
-    library,
-    setLibrary,
+    libraryTracks,
+    setLibraryTracks,
     libraryGenerator,
     status,
     setStatus,
@@ -21,11 +21,11 @@ export function DeleteSongsButton() {
   const handleshow = () => setShowModal(true);
   const handleClick = () => {
     setStatus(statuses[3]);
-    const IDs = library.map((item) => item.track.id);
+    const IDs = libraryTracks.map((item) => item.track.id);
     deleteTracksBatch(tokens.access_token, IDs)
       .then(() => {
         libraryGenerator.current = getLibrary(tokens.access_token);
-        setLibrary([]);
+        setLibraryTracks([]);
         setShadowEntries({ identified: [], marketCorrected: [] });
         setShadowEntriesTotal(0);
         setTimeout(() => {
@@ -41,8 +41,8 @@ export function DeleteSongsButton() {
         variant='danger'
         onClick={handleshow}
         disabled={
-          library === null ||
-          library.length === 0 ||
+          libraryTracks === null ||
+          libraryTracks.length === 0 ||
           ![null, statuses[4]].includes(status)
         }
       >

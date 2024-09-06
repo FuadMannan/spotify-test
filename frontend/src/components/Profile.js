@@ -54,7 +54,7 @@ export function Profile() {
     setProfile,
     tokens,
     setTokens,
-    setLibrary,
+    setLibraryTracks,
     setShadowEntries,
     libraryGenerator,
     setStatus,
@@ -84,7 +84,6 @@ export function Profile() {
           setProfile(result);
           sessionStorage.setItem('spotifyProfile', JSON.stringify(result));
           libraryGenerator.current = getLibrary(tokens.access_token);
-          setLibrary([]);
           setShadowEntries({ identified: [], marketCorrected: [] });
           setTimeout(() => {
             setStatus(statuses[0]);

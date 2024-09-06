@@ -8,8 +8,8 @@ export function AddSongsButton() {
   const {
     profile,
     tokens,
-    library,
-    setLibrary,
+    libraryTracks,
+    setLibraryTracks,
     libraryGenerator,
     status,
     setStatus,
@@ -31,16 +31,23 @@ export function AddSongsButton() {
           setJsonData(null);
           libraryGenerator.current = getLibrary(
             tokens.access_token,
-            library.length
+            libraryTracks.length
           );
-          setLibrary([...library]);
+          setLibraryTracks([...libraryTracks]);
           setTimeout(() => {
             setStatus(statuses[0]);
           }, 3000);
         })
         .catch((error) => console.log(error));
     }
-  }, [jsonData, tokens, library, setLibrary, libraryGenerator, profile]);
+  }, [
+    jsonData,
+    tokens,
+    libraryTracks,
+    setLibraryTracks,
+    libraryGenerator,
+    profile,
+  ]);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
