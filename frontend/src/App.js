@@ -6,6 +6,7 @@ import { Profile } from './components/Profile';
 import { Library } from './components/Library';
 import { Header } from './components/Header';
 import { AuthGuard } from './components/AuthGuard';
+import { getLibrary } from './util/queries';
 
 export const AuthContext = createContext();
 
@@ -81,7 +82,8 @@ function App() {
 
   useEffect(() => {
     const getSongsBatch = async () => {
-      if (libraryGenerator.current && libraryTracks && status === statuses[0]) {
+      if (status && statuses.indexOf(status) <= 1) {
+        libraryGenerator.current = getLibrary(tokens.access_token, 'tracks');
         let done = false;
         try {
           while (!done) {
@@ -116,7 +118,9 @@ function App() {
       }
     };
     getSongsBatch();
-  }, [libraryTracks, status]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const context = {
     clientId,

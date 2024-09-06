@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useContext } from 'react';
 import { Card, Spinner } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import { getLibrary } from '../util/queries';
 
 function accessTokenQuery(clientId, code) {
   const verifier = sessionStorage.getItem('verifier');
@@ -54,9 +53,7 @@ export function Profile() {
     setProfile,
     tokens,
     setTokens,
-    setLibraryTracks,
     setShadowEntries,
-    libraryGenerator,
     setStatus,
     statuses,
   } = useContext(AuthContext);
@@ -83,7 +80,6 @@ export function Profile() {
         if (profile.id === '' && !Object.keys(result).includes('error')) {
           setProfile(result);
           sessionStorage.setItem('spotifyProfile', JSON.stringify(result));
-          libraryGenerator.current = getLibrary(tokens.access_token);
           setShadowEntries({ identified: [], marketCorrected: [] });
           setTimeout(() => {
             setStatus(statuses[0]);
