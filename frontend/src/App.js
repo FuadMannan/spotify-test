@@ -62,10 +62,11 @@ function App() {
   const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
   const [status, setStatus] = useState(null);
   const statuses = [
-    'Loading Library',
-    'Finding Shadow Entries',
-    'Adding Songs',
-    'Deleting Library',
+    'Loading Tracks',
+    'Loading Albums',
+    'Finding Shadow Tracks',
+    'Adding Tracks',
+    'Deleting Tracks',
     'Completed',
   ];
 
@@ -102,9 +103,9 @@ function App() {
               done = true;
               setTimeout(() => {
                 if (libraryTracks.length === 0) {
-                  setStatus(statuses[4]);
+                  setStatus(statuses[5]);
                 } else {
-                  setStatus(statuses[1]);
+                  setStatus(statuses[2]);
                 }
               }, 1000);
             }

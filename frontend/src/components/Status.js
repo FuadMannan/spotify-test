@@ -9,8 +9,8 @@ export function Status() {
   const [transition, setTransition] = useState('slideIn');
 
   useEffect(() => {
-    setInProgress(status && status !== statuses[4]);
-    if (status === statuses[4]) {
+    setInProgress(status && status !== statuses[5]);
+    if (status === statuses[5]) {
       setTimeout(() => {
         setTransition('slideOut');
         setTimeout(() => {
@@ -35,7 +35,7 @@ export function Status() {
               )}
             </>
           ) : (
-            statuses[4]
+            statuses[5]
           )}
         </div>
       ) : (

@@ -28,9 +28,9 @@ export function ReplaceShadowEntriesButton(props) {
       shadowEntries: shadowEntries.identified.map((x) => x.track.id),
       marketCorrected: shadowEntries.marketCorrected.map((x) => x.id),
     };
-    setStatus(statuses[3]);
+    setStatus(statuses[4]);
     deleteTracksBatch(tokens.access_token, IDs.shadowEntries).then(() => {
-      setStatus(statuses[2]);
+      setStatus(statuses[3]);
       IDs.marketCorrected = IDs.marketCorrected.reverse();
       saveTracksBatch(tokens.access_token, IDs.marketCorrected).then(() => {
         const newLibrary = libraryTracks.filter((x) => {
@@ -55,7 +55,7 @@ export function ReplaceShadowEntriesButton(props) {
         variant='spotify'
         onClick={handleshow}
         disabled={
-          ![null, statuses[4]].includes(status) ||
+          ![null, statuses[5]].includes(status) ||
           shadowEntries === null ||
           shadowEntries.identified.length === 0
         }

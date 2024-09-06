@@ -43,7 +43,7 @@ export function DownloadButton(props) {
       onClick={handleDownload}
       disabled={
         libraryTracks.length !== totalTracks ||
-        ![null, statuses[4]].includes(status)
+        ![null, statuses[5]].includes(status)
       }
     >
       Download as JSON

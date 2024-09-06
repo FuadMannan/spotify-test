@@ -20,7 +20,7 @@ export function DeleteSongsButton() {
   const handleClose = () => setShowModal(false);
   const handleshow = () => setShowModal(true);
   const handleClick = () => {
-    setStatus(statuses[3]);
+    setStatus(statuses[4]);
     const IDs = libraryTracks.map((item) => item.track.id);
     deleteTracksBatch(tokens.access_token, IDs)
       .then(() => {
@@ -43,7 +43,7 @@ export function DeleteSongsButton() {
         disabled={
           libraryTracks === null ||
           libraryTracks.length === 0 ||
-          ![null, statuses[4]].includes(status)
+          ![null, statuses[5]].includes(status)
         }
       >
         Delete ALL Songs

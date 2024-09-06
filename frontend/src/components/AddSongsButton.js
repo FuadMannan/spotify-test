@@ -24,7 +24,7 @@ export function AddSongsButton() {
 
   useEffect(() => {
     if (jsonData) {
-      setStatus(statuses[2]);
+      setStatus(statuses[3]);
       const IDs = jsonData.map((item) => item.track.id).reverse();
       saveTracksBatch(tokens.access_token, IDs)
         .then(() => {
@@ -74,7 +74,7 @@ export function AddSongsButton() {
       <Button
         variant='spotify'
         onClick={handleshow}
-        disabled={jsonData || ![null, statuses[4]].includes(status)}
+        disabled={jsonData || ![null, statuses[5]].includes(status)}
       >
         {jsonData ? 'Adding songs..' : 'Add songs'}
       </Button>

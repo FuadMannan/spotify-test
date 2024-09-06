@@ -279,7 +279,7 @@ export function Library() {
   useEffect(getSongSelection, [page, libraryTracks, mode, shadowEntries]);
 
   useEffect(() => {
-    if (status === statuses[1]) {
+    if (status === statuses[2]) {
       getShadowEntries(
         tokens.access_token,
         profile.country,
@@ -289,7 +289,7 @@ export function Library() {
           setShadowEntriesTotal(entries.identified.length);
           setShadowEntries(entries);
         }
-        setStatus(statuses[4]);
+        setStatus(statuses[5]);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
