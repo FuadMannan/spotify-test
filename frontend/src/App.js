@@ -57,8 +57,10 @@ function App() {
     sessionStorage.spotifyTokens ? sessionStorage.spotifyTokens : null
   );
   const [libraryTracks, setLibraryTracks] = useState([]);
+  const [libraryAlbums, setLibraryAlbums] = useState([]);
   const libraryGenerator = useRef(null);
   const [totalTracks, setTotalTracks] = useState(-1);
+  const [totalAlbums, setTotalAlbums] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
   const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
   const [status, setStatus] = useState(null);
@@ -83,28 +85,34 @@ function App() {
   useEffect(() => {
     const getSongsBatch = async () => {
       if (status && statuses.indexOf(status) <= 1) {
-        libraryGenerator.current = getLibrary(tokens.access_token, 'tracks');
+        let setState, setTotalState;
+        if (status === statuses[0]) {
+          libraryGenerator.current = getLibrary(tokens.access_token, 'tracks');
+          [setState, setTotalState] = [setLibraryTracks, setTotalTracks];
+        } else {
+          libraryGenerator.current = getLibrary(tokens.access_token, 'albums');
+          [setState, setTotalState] = [setLibraryAlbums, setTotalAlbums];
+        }
         let done = false;
         try {
           while (!done) {
-            const songsBatch = await libraryGenerator.current.next();
-            if (!songsBatch.done) {
-              if (!Array.isArray(songsBatch.value)) {
-                setTotalTracks(songsBatch.value.total);
-                songsBatch.value = songsBatch.value.songs;
+            const itemsBatch = await libraryGenerator.current.next();
+            if (!itemsBatch.done) {
+              if (!Array.isArray(itemsBatch.value)) {
+                setTotalState(itemsBatch.value.total);
+                itemsBatch.value = itemsBatch.value.songs;
               }
-              if (songsBatch.value) {
-                setLibraryTracks((current) => [
-                  ...current,
-                  ...songsBatch.value,
-                ]);
-              } else if (!songsBatch.value) {
+              if (itemsBatch.value) {
+                setState((current) => [...current, ...itemsBatch.value]);
+              } else if (!itemsBatch.value) {
                 throw new Error('Something went wrong');
               }
             } else {
               done = true;
               setTimeout(() => {
-                if (libraryTracks.length === 0) {
+                if (status === statuses[0]) {
+                  setStatus(statuses[1]);
+                } else if (libraryTracks.length === 0) {
                   setStatus(statuses[5]);
                 } else {
                   setStatus(statuses[2]);
@@ -131,8 +139,11 @@ function App() {
     setTokens,
     libraryTracks,
     setLibraryTracks,
+    libraryAlbums,
+    setLibraryAlbums,
     libraryGenerator,
     totalTracks,
+    totalAlbums,
     shadowEntries,
     setShadowEntries,
     shadowEntriesTotal,
