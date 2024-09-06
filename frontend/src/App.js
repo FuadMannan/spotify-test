@@ -57,7 +57,7 @@ function App() {
   );
   const [libraryTracks, setLibraryTracks] = useState([]);
   const libraryGenerator = useRef(null);
-  const [libraryTotal, setLibraryTotal] = useState(-1);
+  const [totalTracks, setTotalTracks] = useState(-1);
   const [shadowEntries, setShadowEntries] = useState(null);
   const [shadowEntriesTotal, setShadowEntriesTotal] = useState(-1);
   const [status, setStatus] = useState(null);
@@ -87,7 +87,7 @@ function App() {
             const songsBatch = await libraryGenerator.current.next();
             if (!songsBatch.done) {
               if (!Array.isArray(songsBatch.value)) {
-                setLibraryTotal(songsBatch.value.total);
+                setTotalTracks(songsBatch.value.total);
                 songsBatch.value = songsBatch.value.songs;
               }
               if (songsBatch.value) {
@@ -127,7 +127,7 @@ function App() {
     libraryTracks,
     setLibraryTracks,
     libraryGenerator,
-    libraryTotal,
+    totalTracks,
     shadowEntries,
     setShadowEntries,
     shadowEntriesTotal,

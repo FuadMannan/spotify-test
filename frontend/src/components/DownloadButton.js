@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
 
 export function DownloadButton(props) {
-  const { libraryTracks, libraryTotal, shadowEntries, status, statuses } =
+  const { libraryTracks, totalTracks, shadowEntries, status, statuses } =
     useContext(AuthContext);
   const endpoint = 'http://localhost:8000/download-library';
 
@@ -42,7 +42,7 @@ export function DownloadButton(props) {
       variant='spotify'
       onClick={handleDownload}
       disabled={
-        libraryTracks.length !== libraryTotal ||
+        libraryTracks.length !== totalTracks ||
         ![null, statuses[4]].includes(status)
       }
     >

@@ -24,7 +24,7 @@ function convertMilliseconds(ms) {
 export function Library() {
   const {
     libraryTracks,
-    libraryTotal,
+    totalTracks,
     tokens,
     profile,
     shadowEntries,
@@ -69,10 +69,10 @@ export function Library() {
 
   // sets total pages
   useEffect(() => {
-    const newLibraryTotal = Math.ceil(libraryTotal / BATCH_SIZE);
+    const newLibraryTotal = Math.ceil(totalTracks / BATCH_SIZE);
     const newShadowTotal = Math.ceil(shadowEntriesTotal / BATCH_SIZE);
     setTotalPages({ library: newLibraryTotal, shadowEntries: newShadowTotal });
-  }, [libraryTotal, shadowEntriesTotal]);
+  }, [totalTracks, shadowEntriesTotal]);
 
   // sets initial page range, total pagination items
   useLayoutEffect(() => {
@@ -293,7 +293,7 @@ export function Library() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [libraryTracks, libraryTotal, status]);
+  }, [libraryTracks, totalTracks, status]);
 
   useEffect(() => {
     const container = document.getElementById('innerTableContainer');
@@ -390,7 +390,7 @@ export function Library() {
                     <td>{convertMilliseconds(song.track.duration_ms)}</td>
                   </tr>
                 ))
-              ) : libraryTracks.length !== libraryTotal ? (
+              ) : libraryTracks.length !== totalTracks ? (
                 <tr>
                   <td>
                     <Spinner animation='border' />
