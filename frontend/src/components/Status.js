@@ -3,12 +3,20 @@ import { AuthContext } from '../App';
 import { Spinner } from 'react-bootstrap';
 
 export function Status() {
-  const { status, setStatus, statuses, libraryTracks, totalTracks } =
-    useContext(AuthContext);
+  const {
+    status,
+    setStatus,
+    statuses,
+    libraryTracks,
+    libraryAlbums,
+    totalTracks,
+    totalAlbums,
+  } = useContext(AuthContext);
   const [inProgress, setInProgress] = useState(false);
   const [transition, setTransition] = useState('slideIn');
 
   useEffect(() => {
+    console.log(status);
     setInProgress(status && status !== statuses[5]);
     if (status === statuses[5]) {
       setTimeout(() => {
@@ -30,6 +38,8 @@ export function Status() {
               {status}:{' '}
               {status === statuses[0] ? (
                 `${libraryTracks.length}/${totalTracks}`
+              ) : status === statuses[1] ? (
+                `${libraryAlbums.length}/${totalAlbums}`
               ) : (
                 <Spinner animation='border' size='sm' className='ms-3' />
               )}
