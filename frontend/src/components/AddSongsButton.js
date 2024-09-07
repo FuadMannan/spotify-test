@@ -1,6 +1,6 @@
 import { Button, Modal } from 'react-bootstrap';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { saveTracksBatch } from '../util/queries';
+import { saveItemsBatch } from '../util/queries';
 import { AuthContext } from '../App';
 import { getLibrary } from '../util/queries';
 
@@ -26,7 +26,7 @@ export function AddSongsButton() {
     if (jsonData) {
       setStatus(statuses[3]);
       const IDs = jsonData.map((item) => item.track.id).reverse();
-      saveTracksBatch(tokens.access_token, IDs)
+      saveItemsBatch(tokens.access_token, IDs)
         .then(() => {
           setJsonData(null);
           libraryGenerator.current = getLibrary(

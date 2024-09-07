@@ -142,7 +142,7 @@ export async function getShadowEntries(token, market, library) {
   return results;
 }
 
-export async function saveTracksBatch(token, trackIDs, itemType = 'tracks') {
+export async function saveItemsBatch(token, trackIDs, itemType = 'tracks') {
   const batches = Math.ceil(trackIDs.length / 50);
   const results = [];
   for (let i = 0; i < batches; i++) {

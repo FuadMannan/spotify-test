@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import { deleteItemsBatch, getLibrary, saveTracksBatch } from '../util/queries';
+import { deleteItemsBatch, getLibrary, saveItemsBatch } from '../util/queries';
 
 export function ReplaceShadowEntriesButton(props) {
   const {
@@ -28,7 +28,7 @@ export function ReplaceShadowEntriesButton(props) {
     deleteItemsBatch(tokens.access_token, IDs.shadowEntries).then(() => {
       setStatus(statuses[3]);
       IDs.marketCorrected = IDs.marketCorrected.reverse();
-      saveTracksBatch(tokens.access_token, IDs.marketCorrected).then(() => {
+      saveItemsBatch(tokens.access_token, IDs.marketCorrected).then(() => {
         const newLibrary = libraryTracks.filter((x) => {
           return !IDs.shadowEntries.includes(x.track.id);
         });
