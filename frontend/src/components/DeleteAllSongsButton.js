@@ -1,6 +1,6 @@
 import { Button, Modal } from 'react-bootstrap';
 import { useContext, useState } from 'react';
-import { deleteTracksBatch, getLibrary } from '../util/queries';
+import { deleteItemsBatch, getLibrary } from '../util/queries';
 import { AuthContext } from '../App';
 
 export function DeleteSongsButton() {
@@ -22,7 +22,7 @@ export function DeleteSongsButton() {
   const handleClick = () => {
     setStatus(statuses[4]);
     const IDs = libraryTracks.map((item) => item.track.id);
-    deleteTracksBatch(tokens.access_token, IDs)
+    deleteItemsBatch(tokens.access_token, IDs)
       .then(() => {
         libraryGenerator.current = getLibrary(tokens.access_token);
         setLibraryTracks([]);

@@ -155,7 +155,7 @@ export async function saveTracksBatch(token, trackIDs, itemType = 'tracks') {
   return results;
 }
 
-export async function deleteTracksBatch(token, trackIDs, itemType = 'tracks') {
+export async function deleteItemsBatch(token, trackIDs, itemType = 'tracks') {
   const batches = Math.ceil(trackIDs.length / 50);
   const promises = [];
   const results = [];

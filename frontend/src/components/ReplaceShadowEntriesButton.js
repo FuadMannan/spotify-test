@@ -1,11 +1,7 @@
 import { useContext, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../App';
-import {
-  deleteTracksBatch,
-  getLibrary,
-  saveTracksBatch,
-} from '../util/queries';
+import { deleteItemsBatch, getLibrary, saveTracksBatch } from '../util/queries';
 
 export function ReplaceShadowEntriesButton(props) {
   const {
@@ -29,7 +25,7 @@ export function ReplaceShadowEntriesButton(props) {
       marketCorrected: shadowEntries.marketCorrected.map((x) => x.id),
     };
     setStatus(statuses[4]);
-    deleteTracksBatch(tokens.access_token, IDs.shadowEntries).then(() => {
+    deleteItemsBatch(tokens.access_token, IDs.shadowEntries).then(() => {
       setStatus(statuses[3]);
       IDs.marketCorrected = IDs.marketCorrected.reverse();
       saveTracksBatch(tokens.access_token, IDs.marketCorrected).then(() => {
