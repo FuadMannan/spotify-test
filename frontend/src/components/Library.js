@@ -40,7 +40,7 @@ export function Library() {
     statuses,
   } = useContext(AuthContext);
   const [page, setPage] = useState({ current: 1, range: [] });
-  const [itemsOnPage, setItemsOnPage] = useState(null);
+  const [itemsOnPage, setItemsOnPage] = useState([]);
   const [totalPaginationItems, setTotalPaginationItems] = useState(1);
   const [paginationItems, setPaginationItems] = useState([]);
   const [totalPages, setTotalPages] = useState(
@@ -57,17 +57,6 @@ export function Library() {
   }, [location.state]);
 
   // sets songs on page
-  const getItemSelection = () => {
-    const start = (page.current - 1) * BATCH_SIZE;
-    const end = page.current * BATCH_SIZE;
-    const items =
-      mode === modes[0]
-        ? libraryTracks
-        : mode === modes[1]
-        ? shadowEntries.identified
-        : libraryAlbums;
-    setItemsOnPage(items.slice(start, end));
-  };
 
   const BATCH_SIZE = 50;
   const PAGINATION_ITEM_WIDTH = 51;
@@ -286,7 +275,20 @@ export function Library() {
     setPaginationItems(tempIndices);
   }, [totalPaginationItems, page, totalPages, mode]);
 
-  useEffect(getItemSelection, [page, libraryTracks, mode, shadowEntries]);
+  useLayoutEffect(() => {
+    const getItemSelection = () => {
+      const start = (page.current - 1) * BATCH_SIZE;
+      const end = page.current * BATCH_SIZE;
+      const items =
+        mode === modes[0]
+          ? libraryTracks
+          : mode === modes[1]
+          ? shadowEntries.identified
+          : libraryAlbums;
+      setItemsOnPage(items.slice(start, end));
+    };
+    getItemSelection();
+  }, [page, libraryTracks, mode, shadowEntries, libraryAlbums]);
 
   useEffect(() => {
     if (status === statuses[2]) {
@@ -315,9 +317,13 @@ export function Library() {
       placement='top-start'
       overlay={<Tooltip disabled={true}>{title}</Tooltip>}
     >
-      <a className='link-body-emphasis' href={href}>
-        {children}
-      </a>
+      {href ? (
+        <a className='link-body-emphasis' href={href}>
+          {children}
+        </a>
+      ) : (
+        <span>{children}</span>
+      )}
     </OverlayTrigger>
   );
 
@@ -346,92 +352,211 @@ export function Library() {
         <div id='innerTableContainer'>
           <Table striped hover data-bs-theme='dark' className='mb-0'>
             <thead className='sticky-header'>
-              <tr>
-                <th style={{ width: '5vw' }}>#</th>
-                <th style={{ width: '25vw' }}>Title</th>
-                <th style={{ width: '20vw' }}>Artist</th>
-                <th style={{ width: '20vw' }}>Album</th>
-                <th style={{ width: '15vw' }}>Date added</th>
-                <th style={{ width: '5vw' }}>Length</th>
-              </tr>
+              {(modes.indexOf(mode) < 2 && (
+                <tr>
+                  <th style={{ width: '5vw' }}>#</th>
+                  <th style={{ width: '25vw' }}>Title</th>
+                  <th style={{ width: '20vw' }}>Artist</th>
+                  <th style={{ width: '20vw' }}>Album</th>
+                  <th style={{ width: '15vw' }}>Date Added</th>
+                  <th style={{ width: '5vw' }}>Length</th>
+                </tr>
+              )) ||
+                (modes.indexOf(mode) === 2 && (
+                  <tr>
+                    <th style={{ width: '5vw' }}>#</th>
+                    <th style={{ width: '15vw' }}>Album</th>
+                    <th style={{ width: '10vw' }}>Artist</th>
+                    <th style={{ width: '10vw' }}>Type</th>
+                    <th style={{ width: '5vw' }}>Total Tracks</th>
+                    <th style={{ width: '10vw' }}>Genres</th>
+                    <th style={{ width: '10vw' }}>Label</th>
+                    <th style={{ width: '10vw' }}>Release Date</th>
+                    <th style={{ width: '10vw' }}>Date Added</th>
+                    <th style={{ width: '5vw' }}>Length</th>
+                  </tr>
+                ))}
             </thead>
             <tbody>
-              {modes.indexOf(mode) < 2 &&
-              itemsOnPage &&
-              Array.isArray(itemsOnPage) &&
-              itemsOnPage.length !== 0 ? (
-                itemsOnPage.map((song, i) => (
+              {modes.indexOf(mode) < 2 ? (
+                itemsOnPage.length !== 0 && itemsOnPage[0].track ? (
+                  itemsOnPage.map((item, i) => (
+                    <tr>
+                      <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
+                      <td className='truncate'>
+                        <TooltipHelper
+                          title={item.track.name}
+                          href={item.track.external_urls.spotify}
+                        >
+                          {item.track.name}
+                        </TooltipHelper>
+                      </td>
+                      <td className='truncate'>
+                        {item.track.artists.map((artist, i) => (
+                          <>
+                            <TooltipHelper
+                              title={item.track.artists
+                                .map((artist) => artist.name)
+                                .join(', ')}
+                              href={artist.external_urls.spotify}
+                            >
+                              {artist.name}
+                            </TooltipHelper>
+                            {item.track.artists.length > 1 &&
+                            i < item.track.artists.length - 1
+                              ? ', '
+                              : ''}
+                          </>
+                        ))}
+                      </td>
+                      <td className='truncate'>
+                        <TooltipHelper
+                          title={item.track.album.name}
+                          href={item.track.album.external_urls.spotify}
+                        >
+                          {item.track.album.name}
+                        </TooltipHelper>
+                      </td>
+                      <td>{item.added_at}</td>
+                      <td>{convertMilliseconds(item.track.duration_ms)}</td>
+                    </tr>
+                  ))
+                ) : libraryTracks.length !== totalTracks ? (
                   <tr>
-                    <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
-                    <td className='truncate'>
-                      <TooltipHelper
-                        title={song.track.name}
-                        href={song.track.external_urls.spotify}
-                      >
-                        {song.track.name}
-                      </TooltipHelper>
+                    <td>
+                      <Spinner animation='border' />
                     </td>
-                    <td className='truncate'>
-                      {song.track.artists.map((artist, i) => (
-                        <>
-                          <TooltipHelper
-                            title={song.track.artists
-                              .map((artist) => artist.name)
-                              .join(', ')}
-                            href={artist.external_urls.spotify}
-                          >
-                            {artist.name}
-                          </TooltipHelper>
-                          {song.track.artists.length > 1 &&
-                          i < song.track.artists.length - 1
-                            ? ', '
-                            : ''}
-                        </>
-                      ))}
+                    <td>
+                      <Spinner animation='border' />
                     </td>
-                    <td className='truncate'>
-                      <TooltipHelper
-                        title={song.track.album.name}
-                        href={song.track.album.external_urls.spotify}
-                      >
-                        {song.track.album.name}
-                      </TooltipHelper>
+                    <td>
+                      <Spinner animation='border' />
                     </td>
-                    <td>{song.added_at}</td>
-                    <td>{convertMilliseconds(song.track.duration_ms)}</td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
                   </tr>
-                ))
-              ) : libraryTracks.length !== totalTracks ? (
-                <tr>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                  <td>
-                    <Spinner animation='border' />
-                  </td>
-                </tr>
-              ) : (
-                <tr>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                  <td>N/A</td>
-                </tr>
-              )}
+                ) : (
+                  <tr>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  </tr>
+                )
+              ) : mode === modes[2] ? (
+                itemsOnPage.length !== 0 && itemsOnPage[0].album ? (
+                  itemsOnPage.map((item, i) => (
+                    <tr>
+                      <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
+                      <td className='truncate'>
+                        <TooltipHelper
+                          title={item.album.name}
+                          href={item.album.external_urls.spotify}
+                        >
+                          {item.album.name}
+                        </TooltipHelper>
+                      </td>
+                      <td className='truncate'>
+                        {item.album.artists.map((artist, i) => (
+                          <>
+                            <TooltipHelper
+                              title={item.album.artists
+                                .map((artist) => artist.name)
+                                .join(', ')}
+                              href={artist.external_urls.spotify}
+                            >
+                              {artist.name}
+                            </TooltipHelper>
+                            {item.album.artists.length > 1 &&
+                            i < item.album.artists.length - 1
+                              ? ', '
+                              : ''}
+                          </>
+                        ))}
+                      </td>
+                      <td className='truncate'>
+                        {item.album.album_type[0].toUpperCase() +
+                          item.album.album_type.slice(1)}
+                      </td>
+                      <td className='truncate'>{item.album.total_tracks}</td>
+                      <td className='truncate'>
+                        {item.album.genres.length > 0
+                          ? item.album.genres.join(', ')
+                          : 'N/A'}
+                      </td>
+                      <td className='truncate'>
+                        <TooltipHelper title={item.album.label}>
+                          {item.album.label}
+                        </TooltipHelper>
+                      </td>
+                      <td className='truncate'>{item.album.release_date}</td>
+                      <td>{item.added_at}</td>
+                      <td>
+                        {convertMilliseconds(
+                          item.album.tracks.items
+                            .map((track) => track.duration_ms)
+                            .reduce((prev, curr) => prev + curr, 0)
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : libraryAlbums.length !== totalAlbums ? (
+                  <tr>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                    <td>
+                      <Spinner animation='border' />
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                    <td>N/A</td>
+                  </tr>
+                )
+              ) : null}
             </tbody>
           </Table>
         </div>

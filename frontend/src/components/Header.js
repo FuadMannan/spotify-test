@@ -27,6 +27,14 @@ export function Header() {
           >
             Shadow Tracks
           </Nav.Link>
+          <Nav.Link
+            as={Link}
+            eventKey={modes[2]}
+            to='/library'
+            state={{ mode: modes[2] }}
+          >
+            Albums
+          </Nav.Link>
         </Nav>
       </Container>
     </Navbar>
