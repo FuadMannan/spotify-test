@@ -50,12 +50,7 @@ function getEndpoint(itemType) {
 }
 
 async function getSavedItems(token, itemType, offset) {
-  let endpoint;
-  if (itemType === 'tracks') {
-    endpoint = SAVED_TRACKS;
-  } else if (itemType === 'albums') {
-    endpoint = SAVED_ALBUMS;
-  }
+  const endpoint = getEndpoint(itemType);
   const URL = `${endpoint}?limit=50&offset=${offset}`;
   return await rateCall(URL, header(token));
 }
@@ -67,17 +62,18 @@ async function getItemsInfoWithMarket(token, ids, market = null) {
   return await rateCall(URL, header(token));
 }
 
-async function updateTracks(token, ids, method) {
-  const URL = `${SAVED_TRACKS}?ids=${ids.join(',')}`;
+async function updateItems(token, itemType, ids, method) {
+  const endpoint = getEndpoint(itemType);
+  const URL = `${endpoint}?ids=${ids.join(',')}`;
   return await rateCall(URL, header(token, method));
 }
 
-async function saveTracks(token, ids) {
-  return await updateTracks(token, ids, 'PUT');
+async function saveTracks(token, itemType, ids) {
+  return await updateItems(token, itemType, ids, 'PUT');
 }
 
-async function deleteTracks(token, ids) {
-  return await updateTracks(token, ids, 'DELETE');
+async function deleteItems(token, itemType, ids) {
+  return await updateItems(token, itemType, ids, 'DELETE');
 }
 
 export async function* getLibrary(
@@ -146,7 +142,7 @@ export async function getShadowEntries(token, market, library) {
   return results;
 }
 
-export async function saveTracksBatch(token, trackIDs) {
+export async function saveTracksBatch(token, trackIDs, itemType = 'tracks') {
   const batches = Math.ceil(trackIDs.length / 50);
   const results = [];
   for (let i = 0; i < batches; i++) {
@@ -154,12 +150,12 @@ export async function saveTracksBatch(token, trackIDs) {
       i * 50,
       Math.min((i + 1) * 50, trackIDs.length)
     );
-    results.push(await saveTracks(token, batchIDs));
+    results.push(await saveTracks(token, itemType, batchIDs));
   }
   return results;
 }
 
-export async function deleteTracksBatch(token, trackIDs) {
+export async function deleteTracksBatch(token, trackIDs, itemType = 'tracks') {
   const batches = Math.ceil(trackIDs.length / 50);
   const promises = [];
   const results = [];
@@ -168,7 +164,7 @@ export async function deleteTracksBatch(token, trackIDs) {
       i * 50,
       Math.min((i + 1) * 50, trackIDs.length)
     );
-    promises.push(deleteTracks(token, batchIDs));
+    promises.push(deleteItems(token, itemType, batchIDs));
     results.push(await Promise.all(promises));
     promises.pop();
   }
