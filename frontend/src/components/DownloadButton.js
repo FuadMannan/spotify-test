@@ -1,14 +1,23 @@
 import { useContext } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../App';
+import { modes } from './Library';
 
 export function DownloadButton(props) {
-  const { libraryTracks, totalTracks, shadowEntries, status, statuses } =
-    useContext(AuthContext);
+  const {
+    libraryTracks,
+    libraryAlbums,
+    totalTracks,
+    shadowEntries,
+    status,
+    statuses,
+  } = useContext(AuthContext);
   const endpoint = 'http://localhost:8000/download-library';
 
   const handleDownload = () => {
-    const data = props.mode === 'library' ? libraryTracks : shadowEntries;
+    const data = [0, 2].includes(modes.indexOf(props.mode))
+      ? { tracks: libraryTracks, albums: libraryAlbums }
+      : shadowEntries;
     fetch(endpoint, {
       method: 'POST',
       headers: {
