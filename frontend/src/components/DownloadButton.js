@@ -35,7 +35,7 @@ export function DownloadButton(props) {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'library.json'; // Specify the file name
+        a.download = 'library.zip';
         document.body.appendChild(a);
         a.click();
         a.remove();
