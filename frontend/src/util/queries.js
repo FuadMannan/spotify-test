@@ -39,6 +39,16 @@ async function rateCall(url, body) {
   }
 }
 
+function getEndpoint(itemType) {
+  let endpoint;
+  if (itemType === 'tracks') {
+    endpoint = SAVED_TRACKS;
+  } else if (itemType === 'albums') {
+    endpoint = SAVED_ALBUMS;
+  }
+  return endpoint;
+}
+
 async function getSavedItems(token, itemType, offset) {
   let endpoint;
   if (itemType === 'tracks') {
