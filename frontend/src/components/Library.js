@@ -28,6 +28,7 @@ export function Library() {
     libraryTracks,
     libraryAlbums,
     totalTracks,
+    totalAlbums,
     tokens,
     profile,
     shadowEntries,
@@ -42,10 +43,9 @@ export function Library() {
   const [itemsOnPage, setItemsOnPage] = useState(null);
   const [totalPaginationItems, setTotalPaginationItems] = useState(1);
   const [paginationItems, setPaginationItems] = useState([]);
-  const [totalPages, setTotalPages] = useState({
-    library: 1,
-    shadowEntries: 0,
-  });
+  const [totalPages, setTotalPages] = useState(
+    modes.reduce((prevMode, currMode) => ({ ...prevMode, [currMode]: 0 }), {})
+  );
   const [mode, setMode] = useState(modes[0]);
 
   const location = useLocation();
@@ -74,10 +74,15 @@ export function Library() {
 
   // sets total pages
   useEffect(() => {
-    const newLibraryTotal = Math.ceil(totalTracks / BATCH_SIZE);
-    const newShadowTotal = Math.ceil(shadowEntriesTotal / BATCH_SIZE);
-    setTotalPages({ library: newLibraryTotal, shadowEntries: newShadowTotal });
-  }, [totalTracks, shadowEntriesTotal]);
+    const newTotalTracks = Math.ceil(totalTracks / BATCH_SIZE);
+    const newTotalShadowTracks = Math.ceil(shadowEntriesTotal / BATCH_SIZE);
+    const newTotalAlbums = Math.ceil(totalAlbums / BATCH_SIZE);
+    setTotalPages({
+      tracks: newTotalTracks,
+      shadowTracks: newTotalShadowTracks,
+      albums: newTotalAlbums,
+    });
+  }, [totalTracks, shadowEntriesTotal, totalAlbums]);
 
   // sets initial page range, total pagination items
   useLayoutEffect(() => {
