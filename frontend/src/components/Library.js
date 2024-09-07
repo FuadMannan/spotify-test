@@ -36,7 +36,7 @@ export function Library() {
     statuses,
   } = useContext(AuthContext);
   const [page, setPage] = useState({ current: 1, range: [] });
-  const [songsOnPage, setSongsOnPage] = useState(null);
+  const [itemsOnPage, setItemsOnPage] = useState(null);
   const [totalPaginationItems, setTotalPaginationItems] = useState(1);
   const [paginationItems, setPaginationItems] = useState([]);
   const [totalPages, setTotalPages] = useState({
@@ -54,14 +54,14 @@ export function Library() {
   }, [location.state]);
 
   // sets songs on page
-  const getSongSelection = () => {
+  const getItemSelection = () => {
     const start = (page.current - 1) * BATCH_SIZE;
     const end = page.current * BATCH_SIZE;
-    const songs =
+    const items =
       mode === 'library'
         ? libraryTracks.slice(start, end)
         : shadowEntries.identified.slice(start, end);
-    setSongsOnPage(songs);
+    setItemsOnPage(items);
   };
 
   const BATCH_SIZE = 50;
@@ -276,7 +276,7 @@ export function Library() {
     setPaginationItems(tempIndices);
   }, [totalPaginationItems, page, totalPages, mode]);
 
-  useEffect(getSongSelection, [page, libraryTracks, mode, shadowEntries]);
+  useEffect(getItemSelection, [page, libraryTracks, mode, shadowEntries]);
 
   useEffect(() => {
     if (status === statuses[2]) {
@@ -346,10 +346,10 @@ export function Library() {
               </tr>
             </thead>
             <tbody>
-              {songsOnPage &&
-              Array.isArray(songsOnPage) &&
-              songsOnPage.length !== 0 ? (
-                songsOnPage.map((song, i) => (
+              {itemsOnPage &&
+              Array.isArray(itemsOnPage) &&
+              itemsOnPage.length !== 0 ? (
+                itemsOnPage.map((song, i) => (
                   <tr>
                     <td>{(page.current - 1) * BATCH_SIZE + i + 1}</td>
                     <td className='truncate'>
