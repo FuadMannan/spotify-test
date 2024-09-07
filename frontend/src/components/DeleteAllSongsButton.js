@@ -43,7 +43,7 @@ export function DeleteSongsButton() {
         disabled={
           libraryTracks === null ||
           libraryTracks.length === 0 ||
-          ![null, statuses[5]].includes(status)
+          ![null, statuses[6]].includes(status)
         }
       >
         Delete ALL Songs

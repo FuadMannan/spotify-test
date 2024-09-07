@@ -51,7 +51,7 @@ export function ReplaceShadowEntriesButton(props) {
         variant='spotify'
         onClick={handleshow}
         disabled={
-          ![null, statuses[5]].includes(status) ||
+          ![null, statuses[6]].includes(status) ||
           shadowEntries === null ||
           shadowEntries.identified.length === 0
         }

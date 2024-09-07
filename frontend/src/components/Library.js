@@ -306,7 +306,7 @@ export function Library() {
           setShadowEntriesTotal(entries.identified.length);
           setShadowEntries(entries);
         }
-        setStatus(statuses[5]);
+        setStatus(statuses[6]);
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

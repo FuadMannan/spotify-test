@@ -74,7 +74,7 @@ export function AddSongsButton() {
       <Button
         variant='spotify'
         onClick={handleshow}
-        disabled={jsonData || ![null, statuses[5]].includes(status)}
+        disabled={jsonData || ![null, statuses[6]].includes(status)}
       >
         {jsonData ? 'Adding songs..' : 'Add songs'}
       </Button>

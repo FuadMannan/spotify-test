@@ -70,6 +70,7 @@ function App() {
     'Finding Shadow Tracks',
     'Adding Tracks',
     'Deleting Tracks',
+    'Deleting Albums',
     'Completed',
   ];
 
@@ -113,7 +114,7 @@ function App() {
                 if (status === statuses[0]) {
                   setStatus(statuses[1]);
                 } else if (libraryTracks.length === 0) {
-                  setStatus(statuses[5]);
+                  setStatus(statuses[6]);
                 } else {
                   setStatus(statuses[2]);
                 }
