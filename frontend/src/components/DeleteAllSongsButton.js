@@ -1,6 +1,6 @@
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Dropdown, Modal } from 'react-bootstrap';
 import { useContext, useState } from 'react';
-import { deleteItemsBatch, getLibrary } from '../util/queries';
+import { deleteItemsBatch } from '../util/queries';
 import { AuthContext } from '../App';
 
 export function DeleteSongsButton() {
@@ -8,7 +8,8 @@ export function DeleteSongsButton() {
     tokens,
     libraryTracks,
     setLibraryTracks,
-    libraryGenerator,
+    libraryAlbums,
+    setLibraryAlbums,
     status,
     setStatus,
     statuses,
@@ -16,20 +17,34 @@ export function DeleteSongsButton() {
     setShadowEntriesTotal,
   } = useContext(AuthContext);
   const [showModal, setShowModal] = useState(false);
+  const [itemType, setItemType] = useState(null);
 
-  const handleClose = () => setShowModal(false);
+  const handleClose = () => {
+    setItemType(null);
+    setShowModal(false);
+  };
   const handleshow = () => setShowModal(true);
   const handleClick = () => {
-    setStatus(statuses[4]);
-    const IDs = libraryTracks.map((item) => item.track.id);
-    deleteItemsBatch(tokens.access_token, IDs)
+    setStatus(itemType === 'tracks' ? statuses[4] : statuses[5]);
+    const IDs =
+      itemType === 'tracks'
+        ? libraryTracks.map((item) => item.track.id)
+        : libraryAlbums.map((item) => item.album.id);
+    deleteItemsBatch(tokens.access_token, IDs, itemType)
       .then(() => {
-        libraryGenerator.current = getLibrary(tokens.access_token);
-        setLibraryTracks([]);
-        setShadowEntries({ identified: [], marketCorrected: [] });
-        setShadowEntriesTotal(0);
+        let nextStatus;
+        if (itemType === 'tracks') {
+          setLibraryTracks([]);
+          setShadowEntries({ identified: [], marketCorrected: [] });
+          setShadowEntriesTotal(0);
+          nextStatus = 0;
+        } else {
+          setLibraryAlbums([]);
+          nextStatus = 1;
+        }
         setTimeout(() => {
-          setStatus(statuses[0]);
+          setItemType(null);
+          setStatus(statuses[nextStatus]);
         }, 3000);
       })
       .catch((error) => console.log(error));
@@ -37,17 +52,32 @@ export function DeleteSongsButton() {
 
   return (
     <>
-      <Button
-        variant='danger'
-        onClick={handleshow}
-        disabled={
-          libraryTracks === null ||
-          libraryTracks.length === 0 ||
-          ![null, statuses[6]].includes(status)
-        }
-      >
-        Delete ALL Songs
-      </Button>
+      <Dropdown data-bs-theme='dark'>
+        <Dropdown.Toggle
+          variant='danger'
+          disabled={![null, statuses[6]].includes(status)}
+        >
+          Delete
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item
+            onClick={() => {
+              setItemType('tracks');
+              handleshow();
+            }}
+          >
+            Tracks
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              setItemType('albums');
+              handleshow();
+            }}
+          >
+            Albums
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
       <Modal
         data-bs-theme={'dark'}
         className='text-light'
