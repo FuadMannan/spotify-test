@@ -21,9 +21,12 @@ function convertMilliseconds(ms) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`;
 }
 
+export const modes = ['tracks', 'shadowTracks', 'albums'];
+
 export function Library() {
   const {
     libraryTracks,
+    libraryAlbums,
     totalTracks,
     tokens,
     profile,
@@ -43,7 +46,7 @@ export function Library() {
     library: 1,
     shadowEntries: 0,
   });
-  const [mode, setMode] = useState('library');
+  const [mode, setMode] = useState(modes[0]);
 
   const location = useLocation();
 
@@ -58,10 +61,12 @@ export function Library() {
     const start = (page.current - 1) * BATCH_SIZE;
     const end = page.current * BATCH_SIZE;
     const items =
-      mode === 'library'
-        ? libraryTracks.slice(start, end)
-        : shadowEntries.identified.slice(start, end);
-    setItemsOnPage(items);
+      mode === modes[0]
+        ? libraryTracks
+        : mode === modes[1]
+        ? shadowEntries.identified
+        : libraryAlbums;
+    setItemsOnPage(items.slice(start, end));
   };
 
   const BATCH_SIZE = 50;
@@ -346,7 +351,8 @@ export function Library() {
               </tr>
             </thead>
             <tbody>
-              {itemsOnPage &&
+              {modes.indexOf(mode) < 2 &&
+              itemsOnPage &&
               Array.isArray(itemsOnPage) &&
               itemsOnPage.length !== 0 ? (
                 itemsOnPage.map((song, i) => (

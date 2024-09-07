@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Navbar, Container, Nav } from 'react-bootstrap';
+import { modes } from './Library';
 
 export function Header() {
   return (
@@ -12,17 +13,17 @@ export function Header() {
           </Nav.Link>
           <Nav.Link
             as={Link}
-            eventKey='tracks'
+            eventKey={modes[0]}
             to='/library'
-            state={{ mode: 'library' }}
+            state={{ mode: modes[0] }}
           >
             Tracks
           </Nav.Link>
           <Nav.Link
             as={Link}
-            eventKey='shadowTracks'
+            eventKey={modes[1]}
             to='/library'
-            state={{ mode: 'shadowEntries' }}
+            state={{ mode: modes[1] }}
           >
             Shadow Tracks
           </Nav.Link>
