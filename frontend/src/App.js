@@ -73,6 +73,7 @@ function App() {
     'Deleting Albums',
     'Completed',
   ];
+  const skipStatus = useRef(false);
 
   useEffect(() => {
     if (tokens) {
@@ -111,12 +112,17 @@ function App() {
             } else {
               done = true;
               setTimeout(() => {
-                if (status === statuses[0]) {
-                  setStatus(statuses[1]);
-                } else if (libraryTracks.length === 0) {
-                  setStatus(statuses[6]);
+                if (!skipStatus.current) {
+                  if (status === statuses[0]) {
+                    setStatus(statuses[1]);
+                  } else if (libraryTracks.length === 0) {
+                    setStatus(statuses[6]);
+                  } else {
+                    setStatus(statuses[2]);
+                  }
                 } else {
-                  setStatus(statuses[2]);
+                  skipStatus.current = false;
+                  setStatus(statuses[6]);
                 }
               }, 1000);
             }
@@ -152,6 +158,7 @@ function App() {
     status,
     setStatus,
     statuses,
+    skipStatus,
   };
   return (
     <div className='App bg-dark text-bg-dark'>

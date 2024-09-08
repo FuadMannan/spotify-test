@@ -13,6 +13,7 @@ export function DeleteSongsButton() {
     status,
     setStatus,
     statuses,
+    skipStatus,
     setShadowEntries,
     setShadowEntriesTotal,
   } = useContext(AuthContext);
@@ -42,8 +43,9 @@ export function DeleteSongsButton() {
           setLibraryAlbums([]);
           nextStatus = 1;
         }
+        setItemType(null);
+        skipStatus.current = true;
         setTimeout(() => {
-          setItemType(null);
           setStatus(statuses[nextStatus]);
         }, 3000);
       })
