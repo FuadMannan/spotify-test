@@ -9,7 +9,7 @@ import { AuthContext } from '../App';
 import { useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { DownloadButton } from './DownloadButton';
 import { AddSongsButton } from './AddSongsButton';
-import { DeleteSongsButton } from './DeleteAllSongsButton';
+import { DeleteButton } from './DeleteButton';
 import { ReplaceShadowEntriesButton } from './ReplaceShadowEntriesButton';
 import { Status } from './Status';
 import { getShadowEntries } from '../util/queries';
@@ -346,7 +346,7 @@ export function Library() {
           <ReplaceShadowEntriesButton />
         </div>
         <div className='d-inline p-2'>
-          <DeleteSongsButton />
+          <DeleteButton />
         </div>
         <Status />
       </div>

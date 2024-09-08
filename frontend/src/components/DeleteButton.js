@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import { deleteItemsBatch } from '../util/queries';
 import { AuthContext } from '../App';
 
-export function DeleteSongsButton() {
+export function DeleteButton() {
   const {
     tokens,
     libraryTracks,
